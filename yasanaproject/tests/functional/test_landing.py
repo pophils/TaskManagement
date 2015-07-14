@@ -19,5 +19,10 @@ class LandingViewTestCase(LiveServerTestCase):
 
         self.assertIn('yasana', self.page.browser.title.lower())
 
+        about_page = self.page.visit_about_page()
+
+        about_page.has_right_title('about', self.page.browser)
+
+
 
 

@@ -10,7 +10,7 @@ class LandingViewTestCase(TestCase):
     def test_landing_url_resolve_properly(self):
         resolved_url = resolve('/')
 
-        self.assertEqual(resolved_url.func, LandingView().as_view(), msg='Landing url resolve fails')
+        self.assertEqual(resolved_url.func.__name__, LandingView.as_view().__name__, msg='Landing url resolve fails')
 
     def test_landing_get_returns_right_template(self):
 
