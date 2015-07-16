@@ -101,4 +101,5 @@ CACHES = {
     }
 }
 
+AUTH_USER_MODEL = 'yasana.UserProfile'
 
