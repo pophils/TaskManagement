@@ -1,13 +1,9 @@
 from django.conf.urls import patterns, include, url
-from django.contrib import admin
 
-from yasana import urls as yasana_url
+from yasana import urls as yasana_urls
+from account import urls as account_urls
 
 urlpatterns = patterns('',
-                       url(r'^', include(yasana_url, namespace='yasana')),
-    # Examples:
-    # url(r'^$', 'yasanaproject.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
-
-    #url(r'^admin/', include(admin.site.urls)),
+                       url(r'^', include(yasana_urls, namespace='yasana')),
+                       url(r'^account/', include(account_urls, namespace='account')),
 )

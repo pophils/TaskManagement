@@ -1,10 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
 
-</body>
-</html>
+{% extends 'account/base.html' %}
+
+ {% block title %}
+          yasana -- login
+ {% endblock title %}
+
+ {% block main-container %}
+
+     <h3> Please Login</h3>
+
+     <form action="{% url 'account:login' %}" method="post">
+        {% csrf_token %}
+        <input type="text" name="email" placeholder="Please enter your email" maxlength="255">
+        <input type="password" name='password' maxlength="255" placeholder="Please enter your password">
+        <input type="submit" value="Login">
+        <label style="color: red; font-size: 11px;">
+           {% if error_message %}
+               {{ error_message }}
+            {% endif %}
+        </label>
+     </form>
+
+ {% endblock main-container %}
