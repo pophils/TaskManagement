@@ -14,6 +14,9 @@ def signin(request):
             return redirect(reverse('yasana:landing'))
         return render(request, 'account/login.html', {'login_form': LoginForm()})
     else:
+
+        if request.user and request.user.is_authenticated() and request.user.is_active:
+            return redirect(reverse('yasana:landing'))
         form = LoginForm(data=request.POST)
 
         if form.is_valid():

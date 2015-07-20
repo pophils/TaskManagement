@@ -1,5 +1,5 @@
 
-
+from unittest import skip
 from django.test import TestCase
 from django.core.urlresolvers import resolve
 from django.contrib.auth import get_user_model, SESSION_KEY
@@ -48,14 +48,19 @@ class AuthenticationViewTestCase(TestCase):
 
         mock_authenticate.assert_called_once_with(username='user1@gmail.com', password='pass1')
 
-    @patch('account.controller.authentication_view.authenticate')
-    def test_view_can_login_valid_user_and_redirect_to_landing(self, mock_authenticate):
+    def test_view_redirect_to_landing_if_user_is_already_login_on_GET(self):
+        self.User.objects.create_user(email='user1@gmail.com', first_name='Tola', password='pass1')
+        self.client.login(username='user1@gmail.com', password='pass1')
 
-        user = self.User.objects.create_user(email='k@gmail.com', first_name='Tola', password='pass1')
+        response = self.client.get('/account/login/')
 
-        user.backend = ''
-        mock_authenticate.return_value = user
+        self.assertRedirects(response, '/')
+
+    def test_view_redirect_to_landing_if_user_is_already_login_on_POST(self):
+
+        self.User.objects.create_user(email='k@gmail.com', first_name='Tola', password='pass1')
         self.client.login(username='k@gmail.com', password='pass1')
+
         response = self.client.post('/account/login/', data={'email': 'k@gmail.com', 'password': 'pass1'})
         self.assertRedirects(response, '/')
 
@@ -72,14 +77,6 @@ class AuthenticationViewTestCase(TestCase):
         response = self.client.post('/account/login/', data={'email': 'user1@gmail.com', 'password': 'pass1'})
 
         self.assertIsNotNone(response.context['error_message'])
-
-    def test_view_redirect_to_landing_if_user_is_already_login(self):
-        self.User.objects.create_user(email='user1@gmail.com', first_name='Tola', password='pass1')
-        self.client.login(username='user1@gmail.com', password='pass1')
-
-        response = self.client.get('/account/login/')
-
-        self.assertRedirects(response, '/')
 
     @patch('account.controller.authentication_view.authenticate')
     def test_view_create_right_auth_session_on_login(self, mock_authenticate):
