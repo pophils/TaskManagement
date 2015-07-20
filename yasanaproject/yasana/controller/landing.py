@@ -1,7 +1,7 @@
 
 
 from django.views.generic import TemplateView
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
 
 
@@ -13,7 +13,3 @@ class LandingView(TemplateView):
             return redirect(reverse('account:login'))
 
         return super(LandingView, self).get(request, *args, **kwargs)
-
-
-
-

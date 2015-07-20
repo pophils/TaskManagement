@@ -11,10 +11,28 @@
 
      <form action="{% url 'account:login' %}" method="post">
         {% csrf_token %}
-        <input type="text" name="email" placeholder="Please enter your email" maxlength="255">
+     <p>
+        <input type="text" name="email" placeholder="Please enter your email" maxlength="255"
+                 {% if login_form.email.value %}
+                     value = '{{ login_form.email.value }}'
+                 {% endif %}
+                >
+        {% if login_form.email.errors %}
+             <label style="color:red;"> {{ login_form.email.errors.0 }}</label>
+        {% endif %}
+         </p>
+     <p>
         <input type="password" name='password' maxlength="255" placeholder="Please enter your password">
+     {% if login_form.password.errors %}
+             <label style="color:red;"> {{ login_form.password.errors.0 }}</label>
+        {% endif %}
+     </p>
+
+     <p>
         <input type="submit" value="Login">
-        <label style="color: red; font-size: 11px;">
+     </p>
+
+        <label style="color: red; font-size: 12px;">
            {% if error_message %}
                {{ error_message }}
             {% endif %}
