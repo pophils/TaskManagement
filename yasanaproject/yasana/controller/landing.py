@@ -9,6 +9,7 @@ class LandingView(TemplateView):
     template_name = 'yasana/landing.html'
 
     def get(self, request, *args, **kwargs):
+
         if not request.user.is_authenticated():
             return redirect(reverse('account:login'))
 

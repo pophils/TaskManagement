@@ -70,7 +70,7 @@ TEMPLATE_DIRS = (os.path.join(BASE_DIR,  'templates'),)
 SESSION_COOKIE_NAME = 'asana_seskie'
 
 SESSION_COOKIE_SECURE = True
-
+#
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
 

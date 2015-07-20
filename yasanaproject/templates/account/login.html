@@ -7,9 +7,9 @@
 
  {% block main-container %}
 
-     <h3> Please Login</h3>
+     <h3 id="login-header-title"> Please Login</h3>
 
-     <form action="{% url 'account:login' %}" method="post">
+     <form action="{% url 'account:login' %}" method="post" id="login-form">
         {% csrf_token %}
      <p>
         <input type="text" name="email" placeholder="Please enter your email" maxlength="255"
@@ -29,7 +29,7 @@
      </p>
 
      <p>
-        <input type="submit" value="Login">
+        <input type="submit" value="Login" id="submit-login">
      </p>
 
         <label style="color: red; font-size: 12px;">
