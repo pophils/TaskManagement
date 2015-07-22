@@ -46,10 +46,6 @@ ROOT_URLCONF = 'yasanaproject.urls'
 WSGI_APPLICATION = 'yasanaproject.wsgi.application'
 
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/1.7/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'

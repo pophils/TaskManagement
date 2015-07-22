@@ -3,6 +3,8 @@
 from django.contrib.auth import login, authenticate, logout
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
+from django.http import HttpResponse
+from rest_framework import status
 
 from ..core.forms.login_form import LoginForm
 
@@ -37,5 +39,22 @@ def signout(request):
         logout(request)
 
     return redirect(reverse('account:login'))
+
+
+def selenium_login_helper(request):
+    if request.method == 'GET':
+        if request.user and request.user.is_authenticated() and request.user.is_active:
+            return HttpResponse('ok', status=status.HTTP_200_OK)
+
+        form = LoginForm(data=request.GET)
+
+        if form.is_valid():
+            logged_user = authenticate(username=form.cleaned_data['email'], password=form.cleaned_data['password'])
+
+            if logged_user and logged_user.is_active:
+                login(request, logged_user)
+                return HttpResponse('ok', status=status.HTTP_200_OK)
+
+    return HttpResponse('Error performing login', status=status.HTTP_400_BAD_REQUEST)
 
 

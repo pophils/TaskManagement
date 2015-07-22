@@ -3,9 +3,7 @@
 from abc import abstractmethod
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
-from django.conf import settings
-from ...utils.db import create_pre_authenticated_session
-from .page_exception import PageException
+from django.contrib.auth import get_user_model
 
 
 class BasePage(object):
@@ -54,16 +52,7 @@ class BasePage(object):
             self.browser.implicitly_wait(30)
             self.browser.maximize_window()
 
-    def pre_create_user_session(self, email, first_name, password, wrong_url):
-        # load a 404 not found page to help in storing session
-        if not wrong_url or not isinstance(wrong_url, str):
-            raise PageException('Please pass a wrong url to help in pre creating session.')
-
-        self.browser.get(wrong_url)
-        dd = create_pre_authenticated_session(email, first_name, password)
-        self.browser.add_cookie(
-            dict(
-                name=settings.SESSION_COOKIE_NAME,
-                value=dd,
-                path='/',)
-        )
+    def pre_login(self, live_server_url):
+        user = get_user_model().objects.create_user(email='selenium_user@gmail.com',
+                                                    first_name='selenium_user', password='pass1')
+        self.browser.get('%s/account/selenium-login/?email=%s&password=%s' % (live_server_url, user.email, 'pass1'))

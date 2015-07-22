@@ -1,5 +1,4 @@
 
-import os
 from .base import *
 
 DATABASES = {
@@ -13,3 +12,5 @@ INSTALLED_APPS += ('django_nose',)
 
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+SESSION_COOKIE_SECURE = False
