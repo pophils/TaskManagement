@@ -46,3 +46,6 @@ class UserProfile(AbstractBaseEntity, AbstractBaseUser, PermissionsMixin):
 
     class Meta:
         db_table = 'UserProfile'
+        permissions = (
+            ('can_manage_users', 'Can manage users'),
+        )
