@@ -42,7 +42,8 @@ class AuthenticationViewTestCase(TestCase):
 
     @patch('account.controller.authentication_view.authenticate')
     def test_view_authenticate_is_rightly_patched(self, mock_authenticate):
-
+        get_user_model().objects.create_user(email='selenium_user@gmail.com',
+                                             first_name='selenium_user', password='pass1')
         mock_authenticate.return_value = None
         self.client.post('/account/login/', data={'email': 'user1@gmail.com', 'password': 'pass1'})
 
@@ -66,6 +67,9 @@ class AuthenticationViewTestCase(TestCase):
 
     @patch('account.controller.authentication_view.authenticate')
     def test_view_cannot_login_invalid_user(self, mock_authenticate):
+        # Create at least a user to workaround first use of app with default admin credentials
+        get_user_model().objects.create_user(email='selenium_user@gmail.com',
+                                             first_name='selenium_user', password='pass1')
         mock_authenticate.return_value = None
         response = self.client.post('/account/login/', data={'email': 'user1@gmail.com', 'password': 'pass1'})
 
@@ -73,6 +77,8 @@ class AuthenticationViewTestCase(TestCase):
 
     @patch('account.controller.authentication_view.authenticate')
     def test_view_got_error_context_on_invalid_user_login(self, mock_authenticate):
+        get_user_model().objects.create_user(email='selenium_user@gmail.com',
+                                             first_name='selenium_user', password='pass1')
         mock_authenticate.return_value = None
         response = self.client.post('/account/login/', data={'email': 'user1@gmail.com', 'password': 'pass1'})
 
@@ -91,6 +97,8 @@ class AuthenticationViewTestCase(TestCase):
 
     @patch('account.controller.authentication_view.authenticate')
     def test_view_does_not_create_auth_session_on_invalid_login(self, mock_authenticate):
+        get_user_model().objects.create_user(email='selenium_user@gmail.com',
+                                             first_name='selenium_user', password='pass1')
         mock_authenticate.return_value = None
 
         self.client.post('/account/login/', data={'email': 'user1@gmail.com', 'password': 'pass1'})
@@ -109,3 +117,26 @@ class AuthenticationViewTestCase(TestCase):
     def test_logout_view_removed_user_session(self):
         self.client.get('/account/logout/')
         self.assertNotIn(SESSION_KEY, self.client.session, 'User session still valid after logout.')
+
+    def test_login_create_admin_user_on_first_app_use_with_default_admin_credential(self):
+        self.client.post('/account/login/', data={'email': 'admin@admin.com', 'password': 'admin'})
+
+        user = get_user_model().objects.all()
+
+        self.assertEqual(user.count(), 1)
+        self.assertEqual(user[0].email, 'admin@admin.com')
+        self.assertEqual(user[0].first_name, 'admin')
+
+    def test_login_does_not_create_admin_user_on_first_app_use_with_invalid_default_admin_credential(self):
+        response = self.client.post('/account/login/', data={'email': 'adminmmin@admin.com', 'password': 'admin'})
+
+        user = get_user_model().objects.all()
+
+        self.assertEqual(user.count(), 0)
+        self.assertContains(response, 'Please supply the default admin credentials.')
+
+    def test_login_create_admin_user_on_first_app_use_with_add_user_permission(self):
+        self.client.post('/account/login/', data={'email': 'admin@admin.com', 'password': 'admin'})
+
+        user = get_user_model().objects.all()[0]
+        self.assertTrue(user.has_perm('yasana.can_manage_users'))
