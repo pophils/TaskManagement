@@ -5,9 +5,13 @@
           yasana -- login
  {% endblock title %}
 
- {% block main-container %}
+ {% block nav_links %}
 
-     <h3 id="login-header-title"> Please Login</h3>
+{% endblock nav_links %}
+ {% block main-container %}
+  <div id="login-form-div">
+
+   <h3 id="login-header-title"> Login</h3>
 
      <form action="{% url 'account:login' %}" method="post" id="login-form">
         {% csrf_token %}
@@ -18,13 +22,13 @@
                  {% endif %}
                 >
         {% if login_form.email.errors %}
-             <label style="color:red;"> {{ login_form.email.errors.0 }}</label>
+             <label style="color:rgb(218, 9, 9);"> {{ login_form.email.errors.0 }}</label>
         {% endif %}
          </p>
      <p>
         <input type="password" name='password' maxlength="255" placeholder="Please enter your password">
      {% if login_form.password.errors %}
-             <label style="color:red;"> {{ login_form.password.errors.0 }}</label>
+             <label style="color:rgb(218, 9, 9);"> {{ login_form.password.errors.0 }}</label>
         {% endif %}
      </p>
 
@@ -32,11 +36,13 @@
         <input type="submit" value="Login" id="submit-login">
      </p>
 
-        <label style="color: red; font-size: 12px;">
+        <label style="color: rgb(218, 9, 9);">
            {% if error_message %}
                {{ error_message }}
             {% endif %}
         </label>
      </form>
+  </div>
+
 
  {% endblock main-container %}

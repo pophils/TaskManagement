@@ -2,16 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+{% load staticfiles %}
     <title>
          {% block title %}
           yasana -- login
         {% endblock title %}
     </title>
+
+    {%  block styles %}
+        <link rel="stylesheet" type="text/css" href="{% static  'yasana/css/main.css' %}">
+    {% endblock styles %}
+
 </head>
 <body>
+
+
+{% block header %}
+
+    <header role="top-header">
+        <div class="simple-logo">
+            <a href="{% url 'yasana:landing' %}">Yasana</a>
+        </div>
+
+        <div class="auth-user">
+            {% if user.is_authenticated %}
+                 <span>Welcome {{ user.first_name }}</span> |
+
+                <a href="{% url 'account:logout' %}">Logout</a>
+
+                {% else %}
+                 <a href="{% url 'account:login' %}">Login</a>
+
+            {% endif %}
+
+    </div>
+    </header>
+
+{% endblock header %}
+
+{% block nav_links %}
+
+<div class="nav-links">
+
+</div>
+{% endblock nav_links %}
+
+<div class="main-content">
 
  {% block main-container %}
 
  {% endblock main-container %}
+
+</div>
+
+
+
+
+
+
+
+
+
 </body>
 </html>
