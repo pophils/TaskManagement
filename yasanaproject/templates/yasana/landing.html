@@ -1,9 +1,33 @@
 
-{% extends 'yasana/base.html' %}
+{% extends 'common/base.html' %}
 
-
+ {% block title %}
+     yasana --- Enterprise social network.
+ {% endblock title %}
 
 {% block main-container %}
-  <a id="about-us" href="{% url 'yasana:about' %}"> About us</a>
+
+     <ul class="dashboard-summary-container">
+       <li>
+            <p class="summary-count users"> 20</p>
+           <p class="summary-text users"> Users</p>
+       </li>
+
+      <li>
+          <p class="summary-count new"> 20</p>
+           <p class="summary-text new"> New</p>
+       </li>
+
+      <li>
+          <p class="summary-count pending"> 20</p>
+           <p class="summary-text pending"> Pending</p>
+       </li>
+
+      <li>
+          <p class="summary-count completed"> 20</p>
+           <p class="summary-text completed"> Completed</p>
+       </li>
+
+     </ul>
 
 {% endblock main-container %}

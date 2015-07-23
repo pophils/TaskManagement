@@ -1,5 +1,5 @@
 
-{% extends 'account/base.html' %}
+{% extends 'common/base.html' %}
 
  {% block title %}
           yasana -- login
@@ -8,10 +8,14 @@
  {% block nav_links %}
 
 {% endblock nav_links %}
+
+ {% block h2_greeting %}
+  {% endblock h2_greeting %}
+
  {% block main-container %}
   <div id="login-form-div">
 
-   <h3 id="login-header-title"> Login</h3>
+   <h3 id="login-header-title">Login</h3>
 
      <form action="{% url 'account:login' %}" method="post" id="login-form">
         {% csrf_token %}

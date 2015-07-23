@@ -43,12 +43,29 @@
 {% block nav_links %}
 
 <div class="nav-links">
-
+  <div id="user-logo-welcome">
+      <img src="{% static 'yasana/images/brewer.jpg' %}" id="user-image">
+      <div id="user-welcome">
+          <p class="welcome">Welcome</p>
+          <p class="username"> Mr admin. </p>
+      </div>
+  </div>
+    <hr style="clear: both; border: none;">
+   <ul>
+       <li class="active"> <a href="#"> Dashboard</a> </li>
+       <li> <a href="#"> Completed Task</a> </li>
+       <li> <a href="#"> Pending Task</a></li>
+       <li> <a href="#">Pending Task wall</a></li>
+       <li> <a href="#">Manage user</a></li>
+       <li> <a href="#">My profile</a></li>
+   </ul>
 </div>
 {% endblock nav_links %}
 
 <div class="main-content">
-
+{#   {% block h2_greeting %}#}
+{#  <h2 id="landing-welcome"> Welcome to Yasana!. <i>The first social network for the enterprise.</i> </h2>#}
+{#  {% endblock h2_greeting %}#}
  {% block main-container %}
 
  {% endblock main-container %}
