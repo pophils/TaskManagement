@@ -1,0 +1,107 @@
+
+{% extends 'common/base.html' %}
+
+
+{% load staticfiles %}
+ {% block title %}
+          yasana -- manage users
+ {% endblock title %}
+
+
+ {% block main-container %}
+
+     <div class="page-header-wrapper">
+     <div class="page-sub-title">
+     Manage Users
+     </div>
+
+     <div class="new-entity-div">
+     <button type="button" class="btn btn-success">New user</button>
+     </div>
+     </div>
+
+
+  <div class="grid-wrapper">
+
+  <div class="grid-rows">
+
+      <table class="table table-hover table-striped">
+      <thead class="grid-thead">
+        <tr>
+          <th class="image-th">Image</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Department</th>
+            <th>Options</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row"><img src="{% static 'yasana/images/brewer.jpg' %}" class="grid-user-image"></th>
+          <td>Mark Adrian</td>
+          <td>mark@google.com</td>
+          <td>080234561234</td>
+            <td>Marketing</td>
+            <td>
+                <button type="button" class="btn btn-primary">Edit</button>
+                <button type="button" class="btn btn-danger">Delete</button>
+            </td>
+        </tr>
+        <tr>
+         <th scope="row"><img src="{% static 'yasana/images/brewer.jpg' %}" class="grid-user-image"></th>
+          <td>Dele Adesakin</td>
+          <td>deleakinsade@microsoft.com</td>
+          <td>080234561234</td>
+            <td>User Experience</td>
+             <td>
+                <button type="button" class="btn btn-primary">Edit</button>
+                <button type="button" class="btn btn-danger">Delete</button>
+            </td>
+        </tr>
+        <tr>
+          <th scope="row"><img src="{% static 'yasana/images/brewer.jpg' %}" class="grid-user-image"></th>
+          <td>Joel Spoesky</td>
+          <td>jboy@stackoverflow.com</td>
+          <td>080234561234</td>
+            <td>Engineering</td>
+             <td>
+                <button type="button" class="btn btn-primary">Edit</button>
+                <button type="button" class="btn btn-danger">Delete</button>
+            </td>
+        </tr>
+
+        <tr>
+          <th scope="row"><img src="{% static 'yasana/images/brewer.jpg' %}" class="grid-user-image"></th>
+          <td>Larry Page</td>
+          <td>larryp@google.com</td>
+          <td>080234561234</td>
+            <td>Management</td>
+             <td>
+                <button type="button" class="btn btn-primary">Edit</button>
+                <button type="button" class="btn btn-danger">Delete</button>
+            </td>
+        </tr>
+
+        <tr>
+          <th scope="row"><img src="{% static 'yasana/images/brewer.jpg' %}" class="grid-user-image"></th>
+          <td>Andy Rubin</td>
+          <td>andyr@google.com</td>
+          <td>080234561234</td>
+            <td>Android Platform</td>
+             <td>
+                <button type="button" class="btn btn-primary">Edit</button>
+                <button type="button" class="btn btn-danger">Delete</button>
+            </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-footer">
+
+  </div>
+
+  </div>
+
+ {% endblock main-container %}

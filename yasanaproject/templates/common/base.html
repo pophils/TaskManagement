@@ -10,6 +10,7 @@
     </title>
 
     {%  block styles %}
+         <link rel="stylesheet" type="text/css" href="{% static  'yasana/css/bootstrap.min.css' %}">
         <link rel="stylesheet" type="text/css" href="{% static  'yasana/css/main.css' %}">
     {% endblock styles %}
 
@@ -56,7 +57,7 @@
        <li> <a href="#">Completed Task</a> </li>
        <li> <a href="#">Pending Task</a></li>
        <li> <a href="#">Pending Task wall</a></li>
-       <li> <a href="#">Manage user</a></li>
+       <li> <a href="{% url 'account:manage_users' %}">Manage users</a></li>
        <li> <a href="#">My profile</a></li>
    </ul>
 </div>
