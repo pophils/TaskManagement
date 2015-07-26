@@ -20,13 +20,12 @@ yasana.routers = yasana.routers || {};
         },
 
         home: function(){
-            alert('in home view');
-             var view = new views.HomePage();
+            var view = new views.HomePage();
             view.render();
         },
 
         manageUsers: function(){
-          alert('in manage users');
+
         },
 
         render: function(view){
