@@ -52,21 +52,20 @@
       </div>
   </div>
     <hr style="clear: both; border: none;">
-   <ul>
-       <li class="active"> <a href="#">Dashboard</a> </li>
-       <li> <a href="#">Completed Task</a> </li>
-       <li> <a href="#">Pending Task</a></li>
-       <li> <a href="#">Pending Task wall</a></li>
-       <li> <a href="{% url 'account:manage_users' %}">Manage users</a></li>
+   <ul id="nav_link_ul">
+       <li href="" class="active"> Dashboard </li>
+       <li>Completed Task </li>
+       <li>Pending Task</li>
+       <li>Pending Task wall</li>
+       <li href="user-manager">Manage users</li>
+       <li> <a href="{% url 'account:manage_users' %}">Manage usersa</a></li>
        <li> <a href="#">My profile</a></li>
    </ul>
 </div>
 {% endblock nav_links %}
 
 <div class="main-content">
-{#   {% block h2_greeting %}#}
-{#  <h2 id="landing-welcome"> Welcome to Yasana!. <i>The first social network for the enterprise.</i> </h2>#}
-{#  {% endblock h2_greeting %}#}
+
  {% block main-container %}
 
  {% endblock main-container %}
@@ -74,11 +73,97 @@
 </div>
 
 
+<div id="bkbone" style="border: 1px solid green; width: 100%; min-height: 200px"></div>
 
 
 
 
+<script type="application/javascript" src="{% static 'yasana/js/vendor/jquery.js' %}"></script>
+<script type="application/javascript" src="{% static 'yasana/js/vendor/underscore.js' %}"></script>
+<script type="application/javascript" src="{% static 'yasana/js/vendor/backbone.js' %}"></script>
+<script type="application/javascript" src="{% static 'yasana/js/core/utils.js' %}"></script>
+<script type="application/javascript" src="{% static 'yasana/js/models.js' %}"></script>
+<script type="application/javascript" src="{% static 'yasana/js/collections.js' %}"></script>
+<script type="application/javascript" src="{% static 'yasana/js/views.js' %}"></script>
+<script type="application/javascript" src="{% static 'yasana/js/routers.js' %}"></script>
+<script type="application/javascript" src="{% static 'yasana/js/page.js' %}"></script>
 
+
+{##}
+{# <script type="text/template" id="detailId">#}
+{#        <h1> Book Details</h1>#}
+{#        <p>#}
+{#            <b> <%= name %> </b> by <%= author %>#}
+{#        </p>#}
+{#    </script>#}
+{##}
+{#<script type="application/javascript">#}
+{##}
+{#    var Book = Backbone.Model.extend({#}
+{#        initialize: function(options){#}
+{#            console.log('New Book created.');#}
+{#            console.log(options)#}
+{#            this.on("change", function(){#}
+{#                console.log("Book Model changed.");#}
+{#            });#}
+{##}
+{#            this.on("change:name", function(){#}
+{#                console.log("Name changed.");#}
+{#            });#}
+{#        },#}
+{##}
+{#        defaults: {#}
+{#            name:" default name",#}
+{#            author: "default author"#}
+{#        },#}
+{#        url: '/account/manage-users-1'#}
+{#    });#}
+{##}
+{#    var Library = Backbone.Collection.extend({#}
+{#        model: Book,#}
+{#        initialize: function(){#}
+{#            console.log("New Library created");#}
+{#            this.on("remove", function(removedModel, models, options){#}
+{#                console.log('element removed at ' + options.index);#}
+{#                console.log(models)#}
+{#                console.log(removedModel)#}
+{#            });#}
+{#        }#}
+{#    });#}
+{##}
+{#    var view = Backbone.View.extend({#}
+{#        initialize: function(){#}
+{#            console.log("New view created.");#}
+{#            this.template = _.template($("#detailId").html());#}
+{#            this.model.on('change', this.render, this);#}
+{#        },#}
+{#        template: undefined,#}
+{##}
+{#        el: "#bkbone",#}
+{##}
+{#        render: function(){#}
+{#            this.$el.empty().append(this.template(this.model.toJSON()));#}
+{#            return this;#}
+{#        },#}
+{##}
+{#        model: Book,#}
+{##}
+{#        collection: Library,#}
+{##}
+{#        events: {#}
+{#            'click #book' : 'alertBook'#}
+{#        },#}
+{##}
+{#        alertBook: function(e){#}
+{#            alert('Book clicked');#}
+{#        }#}
+{##}
+{#    })#}
+{##}
+{#    var book = new Book({name: 'Js Fundamentals', author: "Joel Spoesky"}, {silent:true, bad:123});#}
+{#    var library = new Library();#}
+{#    var view1 = new view({model : book });#}
+{#</script>#}
 
 
 </body>

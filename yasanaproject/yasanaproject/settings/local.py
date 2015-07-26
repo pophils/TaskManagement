@@ -8,7 +8,7 @@ DEBUG = True
 TEMPLATE_DEBUG = True
 
 
-INSTALLED_APPS += ("debug_toolbar",)
+#INSTALLED_APPS += ("debug_toolbar",)
 
 DATABASES = {
     'default': {
@@ -22,9 +22,9 @@ DATABASES = {
 }
 
 
-MIDDLEWARE_CLASSES += (
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
-    )
+# MIDDLEWARE_CLASSES += (
+#     "debug_toolbar.middleware.DebugToolbarMiddleware",
+#     )
 
 
 SESSION_COOKIE_SECURE = False

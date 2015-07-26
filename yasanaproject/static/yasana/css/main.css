@@ -154,6 +154,7 @@ span.validation-errors{
   width: 100%;
   font-size: 12px;
     padding: 7px 5px 8px 11px;
+    cursor: pointer;
 }
 
 .nav-links li.active {
