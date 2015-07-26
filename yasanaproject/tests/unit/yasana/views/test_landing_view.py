@@ -4,8 +4,7 @@ from django.test import TestCase
 from django.core.urlresolvers import resolve
 from django.contrib.auth import get_user_model
 from yasana.controller.landing import LandingView, landing_task_summary
-from yasana.models import Organisation, Task
-import json
+from yasana.models import Task
 
 
 class LandingViewTestCase(TestCase):
@@ -54,21 +53,16 @@ class LandingViewTestCase(TestCase):
         self.User.objects.create_user(email='user2@gmail.com', first_name='User2', password='pass2')
         self.User.objects.create_user(email='user3@gmail.com', first_name='User3', password='pass3')
 
-        org = Organisation.objects.create(name='Allied soft', address='61/62, Kingsway building, Marina Lagos.')
         user = get_user_model()
         user = user.objects.get(email='admin@admin.com')
 
-        Task.objects.create(organisation=org, title='Development of feedback.', status=0, priority=1,
-                            created_by=user, is_completed=False)
+        Task.objects.create(title='Development of feedback.', status=0, priority=1, created_by=user, is_completed=False)
 
-        Task.objects.create(organisation=org, title='Development of feedback.', status=1, priority=1,
-                            created_by=user, is_completed=False)
+        Task.objects.create(title='Development of feedback.', status=1, priority=1, created_by=user, is_completed=False)
 
-        Task.objects.create(organisation=org, title='Development of feedback.', status=1, priority=1,
-                            created_by=user, is_completed=False)
+        Task.objects.create(title='Development of feedback.', status=1, priority=1, created_by=user, is_completed=False)
 
-        Task.objects.create(organisation=org, title='Development of feedback.', status=2, priority=1,
-                            created_by=user, is_completed=True)
+        Task.objects.create(title='Development of feedback.', status=2, priority=1, created_by=user, is_completed=True)
 
         response = self.client.get('/landing-task-summary/?is_admin=1')
 
@@ -84,19 +78,13 @@ class LandingViewTestCase(TestCase):
         user = self.User.objects.create_user(email='user1@gmail.com', first_name='User1', password='pass1')
         self.client.login(username='user1@gmail.com', password='pass1')
 
-        org = Organisation.objects.create(name='Allied soft', address='61/62, Kingsway building, Marina Lagos.')
+        Task.objects.create(title='Development of feedback.', status=0, priority=1, created_by=user, is_completed=False)
 
-        Task.objects.create(organisation=org, title='Development of feedback.', status=0, priority=1,
-                            created_by=user, is_completed=False)
+        Task.objects.create(title='Development of feedback.', status=1, priority=1, created_by=user, is_completed=False)
 
-        Task.objects.create(organisation=org, title='Development of feedback.', status=1, priority=1,
-                            created_by=user, is_completed=False)
+        Task.objects.create(title='Development of feedback.', status=1, priority=1, created_by=user, is_completed=False)
 
-        Task.objects.create(organisation=org, title='Development of feedback.', status=1, priority=1,
-                            created_by=user, is_completed=False)
-
-        Task.objects.create(organisation=org, title='Development of feedback.', status=2, priority=1,
-                            created_by=user, is_completed=True)
+        Task.objects.create(title='Development of feedback.', status=2, priority=1, created_by=user, is_completed=True)
 
         response = self.client.get('/landing-task-summary/?is_admin=0')
 
@@ -104,3 +92,20 @@ class LandingViewTestCase(TestCase):
         self.assertIn('"pending":2', response.content.decode())
         self.assertIn('"completed":1', response.content.decode())
         self.assertNotIn('"users":3', response.content.decode())
+
+    def test_landing_summary_shows_user_summary_div_on_admin_login(self):
+        self.client.post('/account/login/', data={'email': 'admin@admin.com', 'password': 'admin'})
+
+        response = self.client.get('/')
+        self.assertContains(response, 'class="summary-count users"')
+
+    def test_landing_summary_does_not_show_user_summary_div_on_non_admin_login(self):
+        self.client.post('/account/login/', data={'email': 'admin@admin.com', 'password': 'admin'})
+        self.client.logout()
+
+        self.User.objects.create_user(email='user1@gmail.com', first_name='User1', password='pass1')
+        self.client.login(username='user1@gmail.com', password='pass1')
+
+        response = self.client.get('/')
+
+        self.assertNotContains(response, 'class="summary-count users"')

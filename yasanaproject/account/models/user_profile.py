@@ -3,8 +3,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from .abstract_base_entity import AbstractBaseEntity
-from .organisation import Organisation
-from ..core.Managers.custom_user_manager import CustomUserManager
+from ..core.managers.custom_user_manager import CustomUserManager
 
 
 class UserProfile(AbstractBaseEntity, AbstractBaseUser, PermissionsMixin):
@@ -25,7 +24,6 @@ class UserProfile(AbstractBaseEntity, AbstractBaseUser, PermissionsMixin):
     gender = models.CharField(max_length=1, choices=Gender_Choices, default='p')
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    organisation = models.ForeignKey(Organisation, null=True, blank=True, default=None, related_name='users')
 
     objects = CustomUserManager()
     USERNAME_FIELD = 'email'

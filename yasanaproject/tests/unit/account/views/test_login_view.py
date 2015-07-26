@@ -139,4 +139,4 @@ class AuthenticationViewTestCase(TestCase):
         self.client.post('/account/login/', data={'email': 'admin@admin.com', 'password': 'admin'})
 
         user = get_user_model().objects.all()[0]
-        self.assertTrue(user.has_perm('yasana.can_manage_users'))
+        self.assertTrue(user.has_perm('account.can_manage_users'))
