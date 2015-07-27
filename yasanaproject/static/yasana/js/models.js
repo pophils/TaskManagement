@@ -8,7 +8,7 @@ yasana.models = yasana.models || {};
 (function($, Backbone, mod){
 
     mod.User = Backbone.Model.extend({
-        url:"/account/users/",
+        url:"/api/users/",
 
         defaults:{
             "name":"",

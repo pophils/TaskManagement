@@ -17,11 +17,18 @@ yasana.views = yasana.views || {};
 
         el: ".main-content",
 
-        //events:{ 'click':'sayHi'},
-        //
-        //sayHi:function(){
-        //    alert('say hi');
-        //},
+        events:{ 'click':'sayHi'},
+
+        sayHi:function(){
+            yasana.utils.views.getHtmlFromUrl(yasana.utils.Constants.url.get_add_user_partial_view, this.callback2);
+        },
+
+        callback2: function(template){
+            alert('got template');
+               var popup = jQuery("<div/>").append(template);
+                $(".popup-wrap").empty().append(popup).show();
+                $('.popup-wrap').lightbox_me({ centered: true, lightboxSpeed: "fast" });
+        },
 
         initialize: function(){
 
@@ -87,7 +94,7 @@ yasana.views = yasana.views || {};
         collection: collections.UserCollections,
 
         initialize: function(){
-            yasana.utils.views.getHtmlFromUrl(yasana.utils.Constants.url.get_user_management_partial,
+            yasana.utils.views.getHtmlFromUrl(yasana.utils.Constants.url.get_user_collection_partial_view,
                 this.getHtmlFromUrlCallback);
         },
 
@@ -153,4 +160,3 @@ yasana.views = yasana.views || {};
     });
 
 })($, Backbone, _, yasana.collections, yasana.models, yasana.views);
-

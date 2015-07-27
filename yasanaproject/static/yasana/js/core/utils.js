@@ -82,9 +82,8 @@ yasana.utils = yasana.utils || {};
     mod.Constants.url = mod.Constants.url || {};
 
      $.extend(mod.Constants.url, {
-
-        get_user_management_partial: "/account/get-manage-users-partial"
-
+         get_user_collection_partial_view: "partials/user-collection/",
+         get_add_user_partial_view: 'partials/add-user/'
     });
 
     mod.Constants.view = mod.Constants.view || {};

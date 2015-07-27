@@ -2,7 +2,6 @@
 
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from account.models import UserProfile
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,5 +12,5 @@ class UserSerializer(serializers.ModelSerializer):
         return obj.get_full_name()
 
     class Meta:
-        model = UserProfile
+        model = get_user_model()
         fields = ('email', 'name', 'department', 'phone', 'image_src')

@@ -30,6 +30,8 @@ INSTALLED_APPS = (
     'rest_framework',
     'yasana',
     'account',
+    'api',
+    'partials',
 )
 
 MIDDLEWARE_CLASSES = (
