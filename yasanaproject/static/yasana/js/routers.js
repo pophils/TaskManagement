@@ -21,22 +21,23 @@ yasana.routers = yasana.routers || {};
 
         home: function(){
             var view = new views.HomePage();
-            view.render();
+            this.render(view);
         },
 
         manageUsers: function(){
-
+            var view = new views.ManageUserPage({collection: new collections.UserCollections()});
+            this.render(view);
         },
 
         render: function(view){
             if(this.currentView){
-                this.currentView.remove();
+                this.currentView.$el.empty();//remove();
+                this.currentView.undelegateEvents();
                 this.currentView.unbind();
                 if(this.currentView.close){
                     this.currentView.close();
                 }
             }
-
             this.currentView = view;
             view.render();
         }

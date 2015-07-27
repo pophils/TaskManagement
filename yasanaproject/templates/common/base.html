@@ -11,6 +11,7 @@
 
     {%  block styles %}
          <link rel="stylesheet" type="text/css" href="{% static  'yasana/css/bootstrap.min.css' %}">
+         <link rel="stylesheet" type="text/css" href="{% static  'yasana/css/toastr.css' %}">
         <link rel="stylesheet" type="text/css" href="{% static  'yasana/css/main.css' %}">
     {% endblock styles %}
 
@@ -39,7 +40,13 @@
     </div>
     </header>
 
+
+
 {% endblock header %}
+
+   <div id="loading-div">
+  <div class="content">Loading...</div>
+    </div>
 
 {% block nav_links %}
 
@@ -53,11 +60,11 @@
   </div>
     <hr style="clear: both; border: none;">
    <ul id="nav_link_ul">
-       <li href="" class="active"> Dashboard </li>
+       <li href="" class="active" id="dashboard-link"> Dashboard </li>
        <li>Completed Task </li>
        <li>Pending Task</li>
        <li>Pending Task wall</li>
-       <li href="user-manager">Manage users</li>
+       <li href="user-manager" id="manage-user-link">Manage users</li>
        <li> <a href="{% url 'account:manage_users' %}">Manage usersa</a></li>
        <li> <a href="#">My profile</a></li>
    </ul>
@@ -72,13 +79,8 @@
 
 </div>
 
-
-<div id="bkbone" style="border: 1px solid green; width: 100%; min-height: 200px"></div>
-
-
-
-
 <script type="application/javascript" src="{% static 'yasana/js/vendor/jquery.js' %}"></script>
+<script type="application/javascript" src="{% static 'yasana/js/vendor/toastr.js' %}"></script>
 <script type="application/javascript" src="{% static 'yasana/js/vendor/underscore.js' %}"></script>
 <script type="application/javascript" src="{% static 'yasana/js/vendor/backbone.js' %}"></script>
 <script type="application/javascript" src="{% static 'yasana/js/core/utils.js' %}"></script>
@@ -88,6 +90,34 @@
 <script type="application/javascript" src="{% static 'yasana/js/routers.js' %}"></script>
 <script type="application/javascript" src="{% static 'yasana/js/page.js' %}"></script>
 
+
+<script type="text/template" id="dashboard">
+
+ <ul class="dashboard-summary-container">
+     {% if perms.account.can_manage_users %}
+       <li>
+            <p class="summary-count users">0</p>
+           <p class="summary-text users"> Users</p>
+       </li>
+     {% endif %}
+
+      <li>
+          <p class="summary-count new"> 0</p>
+           <p class="summary-text new"> New</p>
+       </li>
+
+      <li>
+          <p class="summary-count pending">0</p>
+           <p class="summary-text pending"> Pending</p>
+       </li>
+
+      <li>
+          <p class="summary-count completed">0</p>
+           <p class="summary-text completed"> Completed</p>
+       </li>
+
+     </ul>
+</script>
 
 {##}
 {# <script type="text/template" id="detailId">#}

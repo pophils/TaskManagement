@@ -1,13 +1,5 @@
 
-{% extends 'common/base.html' %}
-
- {% block title %}
-     yasana --- Enterprise social network.
- {% endblock title %}
-
-{% block main-container %}
-
-     <ul class="dashboard-summary-container">
+ <ul class="dashboard-summary-container">
      {% if perms.account.can_manage_users %}
        <li>
             <p class="summary-count users">0</p>
@@ -31,5 +23,3 @@
        </li>
 
      </ul>
-
-{% endblock main-container %}

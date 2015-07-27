@@ -15,17 +15,47 @@ yasana.views = yasana.views || {};
 
         is_admin: undefined,
 
+        el: ".main-content",
+
+        //events:{ 'click':'sayHi'},
+        //
+        //sayHi:function(){
+        //    alert('say hi');
+        //},
+
         initialize: function(){
-             if($('p.summary-count.users').length > 0){
-                 this.is_admin =true;
-             }
-            else{
-                 this.is_admin = false;
-             }
+
+            if($('dashboard-summary-container').length > 0){
+                this.checkIsAdmin();
+            }
+            this.compiledTemplate = yasana.utils.views.compileTemplate($('#dashboard').html());
         },
+
+        checkIsAdmin: function () {
+
+             if($('p.summary-count.users').length > 0){
+                    this.is_admin =true;
+                }
+                else{
+                    this.is_admin = false;
+                }
+        },
+
+        isSummaryContainerLoaded: function(){
+            if($('dashboard-summary-container').length > 0){
+                return true;
+            }
+            return false;
+        },
+
+        compiledTemplate: undefined,
 
         render: function(){
            // Just fetch summary and update page
+            if(this.isSummaryContainerLoaded() == false){
+                this.$el.empty().append(this.compiledTemplate);
+            }
+
             if(this.is_admin){
                  yasana.utils.views.getJsonFromUrl('/landing-task-summary/', {is_admin:1}, this.renderCallback)
             }
@@ -42,28 +72,84 @@ yasana.views = yasana.views || {};
             $('p.summary-count.new').text(data.new);
             $('p.summary-count.pending').text(data.pending);
             $('p.summary-count.completed').text(data.completed);
+            yasana.utils.Constants.view.nav_link_clicked = $('li#dashboard-link');
+            yasana.utils.views.updateNavLinkActiveClass();
+            $("#loading-div").hide();
         }
     });
-
 
     mod.ManageUserPage = Backbone.View.extend({
 
         model: models.User,
 
+        el: ".main-content",
+
         collection: collections.UserCollections,
 
         initialize: function(){
-
+            yasana.utils.views.getHtmlFromUrl(yasana.utils.Constants.url.get_user_management_partial,
+                this.getHtmlFromUrlCallback);
         },
+
+        getHtmlFromUrlCallback: function(html){
+            localStorage.yasana_manage_user_partial = html;
+        },
+
+        compiledTemplate: undefined,
 
         render: function(){
 
+            var self = this;
+
+            self.timeoutInstance = setTimeout(function(){
+
+                if (typeof localStorage.yasana_manage_user_partial != "undefined"){
+                    if(self.compiledTemplate == undefined){
+                        self.$el.empty().append(localStorage.yasana_manage_user_partial);
+                        self.compiledTemplate = yasana.utils.views.compileTemplate($('#manage-users').html());
+                    }
+                    self.$el.append(self.compiledTemplate);
+                    yasana.utils.Constants.view.nav_link_clicked = $('li#manage-user-link');
+                    yasana.utils.views.updateNavLinkActiveClass();
+                    clearTimeout(self.timeoutInstance);
+
+                    self.collection.fetch({
+                        success: function(e){
+                            for(var k = 0; k < self.collection.length; k++){
+                                var userRowView = new mod.UserRow({model:self.collection.at(k)});
+                                console.log(userRowView.template);
+                                userRowView.render();
+                            }
+                             yasana.utils.views.hideLoading();
+                        },
+                        error: function(e){
+                            yasana.utils.views.hideLoading();
+                            toastr.error(e + " error");
+                        }
+                    });
+                }
+            }, 3);
         },
 
-        renderCallback: function(data){
+        timeoutInstance: undefined
 
+    });
+
+    mod.UserRow = Backbone.View.extend({
+
+        model: models.User,
+
+        el: '#tbody',
+
+        compiledTemplate: undefined,
+
+        initialize: function(){
+            this.compiledTemplate = yasana.utils.views.compileTemplate($('#user-row').html());
+        },
+
+        render: function(){
+           this.$el.append(this.compiledTemplate({'user': this.model.toJSON()}));
         }
-
     });
 
 })($, Backbone, _, yasana.collections, yasana.models, yasana.views);

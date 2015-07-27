@@ -135,6 +135,22 @@ span.validation-errors{
   display: block;
 }
 
+#loading-div{
+      text-align: center;
+    margin-top: -26px;
+    width: 100%;
+    color: whitesmoke;
+    display:none;
+}
+
+#loading-div .content{
+    height: 26px;
+    background-color: rgba(249, 192, 14, 0.75);
+    width: 114px;
+    border: 1px solid green;
+    vertical-align: middle;
+    margin: auto;
+}
 .nav-links{
     width: 235px;
   float: left;
@@ -228,7 +244,7 @@ span.validation-errors{
 
 .dashboard-summary-container li p.summary-text{
 font-size: 22px;
-  margin-top: -27px
+  margin-top: -15px
 }
 
 .dashboard-summary-container li p.new{
@@ -269,6 +285,11 @@ font-size: 22px;
     width: 100%;
   min-height: 271px;
     padding-bottom: 15px;
+}
+
+#grid-rows-no-items{
+    margin-left: 10px;
+  margin-top: -12px
 }
 .grid-footer{
   margin-top: -16px;

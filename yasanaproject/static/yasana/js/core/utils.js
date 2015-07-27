@@ -14,18 +14,17 @@ yasana.utils = yasana.utils || {};
     $.extend(mod.views, {
 
         compileTemplate: function(html, dataContext, templateSetting){
-
-        if(typeof html != 'undefined' && html.length > 0){
-
-            var compiledTemplate = _.template(html);
+            if(typeof html != 'undefined' && html.length > 0){
+                var compiledTemplate = _.template(html);
 
             if(typeof dataContext != "undefined" && dataContext.length > 0){
                 compiledTemplate(dataContext, templateSetting);
                 return compiledTemplate
             }
-            return compiledTemplate;
-        }
-    },
+                return compiledTemplate;
+            }
+        },
+
         destroyAllEvents: function(view){
 
             if(typeof view != "undefined"){
@@ -34,23 +33,22 @@ yasana.utils = yasana.utils || {};
             }
         },
 
-    getTemplateFromUrl :function(url, callback){
+        getHtmlFromUrl :function(url, callback){
+            if(typeof url == "string"){
+                $.get(url, function (template) {
+                    if(typeof callback == "function"){
+                        callback(template);
+                    }
+                    else{
+                        return template;
+                    }
+                });
+            }
+            else{
+                throw TypeError("Url must be a string");
+            }
+        },
 
-        if(typeof url == "string"){
-             $.get(url, function (template) {
-
-                 if(typeof callback == "function"){
-                     callback();
-                 }
-                 else{
-                     return template;
-                 }
-            });
-        }
-        else{
-            throw TypeError("Url must be a string");
-        }
-    },
         getJsonFromUrl: function(url, data, callback){
             if(url && url.length > 0){
                    $.getJSON(url, data, function (data) {
@@ -59,7 +57,25 @@ yasana.utils = yasana.utils || {};
                     }
                 });
             }
+        },
+
+        updateNavLinkActiveClass: function(){
+            $('#nav_link_ul').find('li.active').removeClass('active');
+            $(mod.Constants.view.nav_link_clicked).addClass('active');
+        },
+
+        showLoading: function(){
+            $("#loading-div").show();
+        },
+
+        hideLoading: function(){
+            $("#loading-div").hide();
+        },
+
+        displayNoItem: function(){
+            $("div.grid-rows").append($('<div id="grid-rows-no-items">No items found</div>'));
         }
+
     });
 
     mod.Constants = mod.Constants || {};
@@ -67,7 +83,15 @@ yasana.utils = yasana.utils || {};
 
      $.extend(mod.Constants.url, {
 
-        HomePage: "/d"
+        get_user_management_partial: "/account/get-manage-users-partial"
+
+    });
+
+    mod.Constants.view = mod.Constants.view || {};
+
+    $.extend(mod.Constants.view, {
+
+        nav_link_clicked: null
 
     });
 

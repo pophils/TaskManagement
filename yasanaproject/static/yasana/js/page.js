@@ -8,8 +8,7 @@
 
   $('#nav_link_ul').find('li').click(function(ev){
          ev.preventDefault();
-         $('#nav_link_ul').find('li.active').removeClass('active');
-         $(this).addClass('active');
          router.navigate($(this).attr('href'), {trigger:true});
+         yasana.utils.views.showLoading();
      });
  });
