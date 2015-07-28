@@ -17,19 +17,6 @@ yasana.views = yasana.views || {};
 
         el: ".main-content",
 
-        events:{ 'click':'sayHi'},
-
-        sayHi:function(){
-            yasana.utils.views.getHtmlFromUrl(yasana.utils.Constants.url.get_add_user_partial_view, this.callback2);
-        },
-
-        callback2: function(template){
-            alert('got template');
-               var popup = jQuery("<div/>").append(template);
-                $(".popup-wrap").empty().append(popup).show();
-                $('.popup-wrap').lightbox_me({ centered: true, lightboxSpeed: "fast" });
-        },
-
         initialize: function(){
 
             if($('dashboard-summary-container').length > 0){
@@ -93,13 +80,43 @@ yasana.views = yasana.views || {};
 
         collection: collections.UserCollections,
 
+        events: {
+            'click #new-user-btn' : 'loadNewUserForm'
+        },
+
         initialize: function(){
-            yasana.utils.views.getHtmlFromUrl(yasana.utils.Constants.url.get_user_collection_partial_view,
+
+            if(typeof localStorage.yasana_user_collection_partial_view == 'undefined'){
+                yasana.utils.views.getHtmlFromUrl(yasana.utils.Constants.url.get_user_collection_partial_view,
                 this.getHtmlFromUrlCallback);
+            }
+        },
+
+        loadNewUserForm : function(){
+            if(typeof localStorage.formPopup == "undefined"){
+                toastr.info('Loading user form popup...');
+                yasana.utils.views.getHtmlFromUrl(yasana.utils.Constants.url.get_add_user_partial_view,
+                this.loadNewUserFormCallback);
+            }
+            else{
+                 mod.ManageUserPage.prototype.showForm();
+            }
+        },
+
+        loadNewUserFormCallback: function(template){
+            var ss = jQuery("<div/>").append(template);
+            localStorage.formPopup = $(ss).html();
+            mod.ManageUserPage.prototype.showForm();
+        },
+
+        showForm: function(){
+            $(".popup-wrap").empty().append(localStorage.formPopup).show();
+            $('.popup-wrap').lightbox_me({ centered: true, lightboxSpeed: "fast" });
+            yasana.utils.views.initClosePopupClickEvent();
         },
 
         getHtmlFromUrlCallback: function(html){
-            localStorage.yasana_manage_user_partial = html;
+            localStorage.yasana_user_collection_partial_view = html;
         },
 
         compiledTemplate: undefined,
@@ -108,23 +125,23 @@ yasana.views = yasana.views || {};
 
             var self = this;
 
-            self.timeoutInstance = setTimeout(function(){
+            self.timeoutInstance = setInterval(function(){
 
-                if (typeof localStorage.yasana_manage_user_partial != "undefined"){
-                    if(self.compiledTemplate == undefined){
-                        self.$el.empty().append(localStorage.yasana_manage_user_partial);
+                if (typeof localStorage.yasana_user_collection_partial_view != "undefined"){
+                    if(typeof self.compiledTemplate == 'undefined'){
+                        self.$el.empty().append(localStorage.yasana_user_collection_partial_view);
                         self.compiledTemplate = yasana.utils.views.compileTemplate($('#manage-users').html());
                     }
+
                     self.$el.append(self.compiledTemplate);
                     yasana.utils.Constants.view.nav_link_clicked = $('li#manage-user-link');
                     yasana.utils.views.updateNavLinkActiveClass();
-                    clearTimeout(self.timeoutInstance);
+                    clearInterval(self.timeoutInstance);
 
                     self.collection.fetch({
                         success: function(e){
                             for(var k = 0; k < self.collection.length; k++){
                                 var userRowView = new mod.UserRow({model:self.collection.at(k)});
-                                console.log(userRowView.template);
                                 userRowView.render();
                             }
                              yasana.utils.views.hideLoading();
@@ -141,6 +158,12 @@ yasana.views = yasana.views || {};
         timeoutInstance: undefined
 
     });
+
+    mod.ManageUserPage.prototype.showForm =function(){
+        $(".popup-wrap").empty().append(localStorage.formPopup).show();
+        $('.popup-wrap').lightbox_me({ centered: true, lightboxSpeed: "fast" });
+        yasana.utils.views.initClosePopupClickEvent();
+    }
 
     mod.UserRow = Backbone.View.extend({
 

@@ -34,6 +34,7 @@ yasana.utils = yasana.utils || {};
         },
 
         getHtmlFromUrl :function(url, callback){
+
             if(typeof url == "string"){
                 $.get(url, function (template) {
                     if(typeof callback == "function"){
@@ -74,8 +75,13 @@ yasana.utils = yasana.utils || {};
 
         displayNoItem: function(){
             $("div.grid-rows").append($('<div id="grid-rows-no-items">No items found</div>'));
-        }
+        },
 
+        initClosePopupClickEvent: function(){
+            $(".popup-close").click(function(ev){
+                 $(".popup-wrap").trigger('close');
+            });
+        }
     });
 
     mod.Constants = mod.Constants || {};

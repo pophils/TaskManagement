@@ -1,10 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
 
-</body>
-</html>
+<div class="popup-header">
+    <span class="popup-header-text">Add User</span>
+    <span class="popup-close">x</span>
+</div>
+
+<form>
+    <p>
+        <input type="text" id="first_name" name="first_name" placeholder="First name" class="form-control"/>
+    </p>
+    <p id="first_nameError" style="color: #EB2424;"></p>
+
+     <p>
+        <input type="text" id="last_name" name="last_name" placeholder="Last name" class="form-control"/>
+    </p>
+
+     <p>
+        <input type="text" id="other_name" name="other_name" placeholder="Other name" class="form-control"/>
+    </p>
+
+     <p>
+        <input type="text" id="phone" name="phone" placeholder="Phone number" class="form-control"/>
+    </p>
+    <p id="phoneError" style="color: #EB2424;"></p>
+
+     <p>
+         <select id="gender" name="gender" class="form-control">
+             <option value="-1" selected="selected">Select gender...</option>
+             <option value="m">Male</option>
+             <option value="f">Female</option>
+             <option value="p">Preferred no to say</option>
+         </select>
+     </p>
+
+     <p>
+        <input type="text" id="department" name="department" placeholder="Department" class="form-control"/>
+    </p>
+
+     <p>
+        <input type="text" id="website" name="website" placeholder="Website" class="form-control"/>
+    </p>
+
+     <p id="websiteError" style="color: #EB2424;"></p>
+
+    <hr>
+
+     <p>
+        <input type="email" id="email" name="email" placeholder="Email" class="form-control"/>
+    </p>
+
+     <p id="emailError" style="color: #EB2424;"></p>
+
+    <p>
+        <input type="password" id="password" name="password" placeholder="Password"  class="form-control"/>
+    </p>
+
+     <p>
+        <input type="password" id="confirm_password" name="confirm_password"  placeholder="Confirm Password"  class="form-control"/>
+    </p>
+
+     <p id="passwordError" style="color: #EB2424;"></p>
+
+     <p>
+        <input type="submit" id="submit-user" class="btn btn-default"/>
+    </p>
+
+    <p class="error-p">
+        <label style="color: #EB2424; font-weight: bolder;"> </label>
+    </p>
+</form>

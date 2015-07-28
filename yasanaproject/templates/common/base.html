@@ -79,10 +79,13 @@
 
 </div>
 
+{% block backbone_script %}
+
 <script type="application/javascript" src="{% static 'yasana/js/vendor/jquery.js' %}"></script>
 <script type="application/javascript" src="{% static 'yasana/js/vendor/toastr.js' %}"></script>
 <script type="application/javascript" src="{% static 'yasana/js/vendor/underscore.js' %}"></script>
 <script type="application/javascript" src="{% static 'yasana/js/vendor/backbone.js' %}"></script>
+<script type="application/javascript" src="{% static 'yasana/js/vendor/lightbox_me.js' %}"></script>
 <script type="application/javascript" src="{% static 'yasana/js/core/utils.js' %}"></script>
 <script type="application/javascript" src="{% static 'yasana/js/models.js' %}"></script>
 <script type="application/javascript" src="{% static 'yasana/js/collections.js' %}"></script>
@@ -90,6 +93,7 @@
 <script type="application/javascript" src="{% static 'yasana/js/routers.js' %}"></script>
 <script type="application/javascript" src="{% static 'yasana/js/page.js' %}"></script>
 
+{% endblock backbone_script %}
 
 <script type="text/template" id="dashboard">
 
@@ -195,6 +199,9 @@
 {#    var view1 = new view({model : book });#}
 {#</script>#}
 
+<div class="popup-wrap">
+
+</div>
 
 </body>
 </html>
