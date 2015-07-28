@@ -19,7 +19,7 @@ yasana.views = yasana.views || {};
 
         initialize: function(){
 
-            if($('dashboard-summary-container').length > 0){
+            if($('.dashboard-summary-container').length > 0){
                 this.checkIsAdmin();
             }
             this.compiledTemplate = yasana.utils.views.compileTemplate($('#dashboard').html());
@@ -93,27 +93,14 @@ yasana.views = yasana.views || {};
         },
 
         loadNewUserForm : function(){
-            if(typeof localStorage.formPopup == "undefined"){
-                toastr.info('Loading user form popup...');
-                yasana.utils.views.getHtmlFromUrl(yasana.utils.Constants.url.get_add_user_partial_view,
-                this.loadNewUserFormCallback);
+            if(typeof this.newUserViewForm == 'undefined'){
+                this.newUserViewForm =  new mod.NewUserForm({model: new models.User()});
             }
-            else{
-                 mod.ManageUserPage.prototype.showForm();
-            }
+            this.newUserViewForm.render();
+            window.newUserViewForm = this.newUserViewForm.model;
         },
 
-        loadNewUserFormCallback: function(template){
-            var ss = jQuery("<div/>").append(template);
-            localStorage.formPopup = $(ss).html();
-            mod.ManageUserPage.prototype.showForm();
-        },
-
-        showForm: function(){
-            $(".popup-wrap").empty().append(localStorage.formPopup).show();
-            $('.popup-wrap').lightbox_me({ centered: true, lightboxSpeed: "fast" });
-            yasana.utils.views.initClosePopupClickEvent();
-        },
+        newUserViewForm : undefined,
 
         getHtmlFromUrlCallback: function(html){
             localStorage.yasana_user_collection_partial_view = html;
@@ -159,12 +146,6 @@ yasana.views = yasana.views || {};
 
     });
 
-    mod.ManageUserPage.prototype.showForm =function(){
-        $(".popup-wrap").empty().append(localStorage.formPopup).show();
-        $('.popup-wrap').lightbox_me({ centered: true, lightboxSpeed: "fast" });
-        yasana.utils.views.initClosePopupClickEvent();
-    }
-
     mod.UserRow = Backbone.View.extend({
 
         model: models.User,
@@ -179,7 +160,89 @@ yasana.views = yasana.views || {};
 
         render: function(){
            this.$el.append(this.compiledTemplate({'user': this.model.toJSON()}));
-        }
+        },
+
+        bindings: {
+
+	'.js-full-name'      : 'name',
+
+	'.js-address-line-1' : 'email',
+
+	'.js-address-line-2' : 'department',
+
+	'.js-city'           : 'imageSrc',
+
+	'.js-city'           : 'phone'
+
+}
+    });
+
+
+    mod.NewUserForm = Backbone.View.extend({
+
+        model: models.User,
+
+        el: '.popup-wrap',
+
+        events: {
+            'click #submit-user':'submitUserForm'
+        },
+
+        submitUserForm: function(ev){
+             ev.preventDefault();
+
+             toastr.info('Saving form...');
+
+             var data = $(".popup-wrap form").serialize();
+
+            $.post("/api/new-user/", data, function (jsonMessage) {
+
+                if (jsonMessage == true) {
+                   alert(7657);
+                }
+                else {
+
+                }
+            });
+        },
+
+        initialize: function(){
+             if(typeof localStorage.formPopup == "undefined"){
+                yasana.utils.views.getHtmlFromUrl(yasana.utils.Constants.url.get_add_user_partial_view,
+                this.loadNewUserFormCallback);
+            }
+        },
+
+        loadNewUserFormCallback: function(template){
+            var ss = jQuery("<div/>").append(template);
+            localStorage.formPopup = $(ss).html();
+        },
+
+        bindings: {
+            '#full_name' : 'name',
+            '#email': 'email',
+            '#department' : 'department',
+            '#phone' : 'phone'
+        },
+
+        render: function(){
+
+            var self = this;
+
+            self.timeoutInstance = setInterval(function(){
+                if (typeof localStorage.formPopup != "undefined"){
+                    self.$el.empty().append(localStorage.formPopup).show();
+                    self.$el.lightbox_me({ centered: true, lightboxSpeed: "fast" });
+                    yasana.utils.views.initClosePopupClickEvent();
+                    clearInterval(self.timeoutInstance);
+                    self.stickit();
+                }
+            }, 3);
+        },
+
+        timeoutInstance: undefined,
+
+
     });
 
 })($, Backbone, _, yasana.collections, yasana.models, yasana.views);

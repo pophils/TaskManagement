@@ -5,6 +5,7 @@
 </div>
 
 <form>
+   {% csrf_token %}
     <p>
         <input type="text" id="first_name" name="first_name" placeholder="First name" class="form-control"/>
     </p>
@@ -35,6 +36,8 @@
      <p>
         <input type="text" id="department" name="department" placeholder="Department" class="form-control"/>
     </p>
+
+     <input type="hidden" id="full_name"/>
 
      <p>
         <input type="text" id="website" name="website" placeholder="Website" class="form-control"/>

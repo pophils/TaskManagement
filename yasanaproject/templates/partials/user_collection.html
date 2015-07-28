@@ -51,10 +51,10 @@
 <script type="text/template" id="user-row">
      <tr>
           <th scope="row"><img src="{% static 'yasana/images/brewer.jpg' %}" class="grid-user-image"></th>
-          <td><%= user.name %></td>
-          <td><%= user.email %></td>
-          <td>080234561234</td>
-            <td><%= user.department %></td>
+          <td class=".stickit_name"><%= user.name %></td>
+         <td class=".stickit_email"><%= user.email %></td>
+          <td class=".stickit_phone">080234561234</td>
+         <td class=".stickit_department"><%= user.department %></td>
             <td>
                 <button type="button" class="btn btn-primary">Edit</button>
                 <button type="button" class="btn btn-danger">Delete</button>

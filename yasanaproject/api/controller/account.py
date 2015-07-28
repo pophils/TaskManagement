@@ -13,3 +13,14 @@ def api_get_users(request):
 
     return Response(UserSerializer(get_user_model().objects.all()[page_num:], many=True).data,
                     status=api_status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def api_get_users1(request):
+    email = request.POST.get('email')
+    password = request.POST.get('password')
+    first_name = request.POST.get('first_name')
+
+    get_user_model().objects.create_user(email=email, first_name=first_name, password=password)
+
+    return Response({'jsonMessage': True}, status=api_status.HTTP_200_OK)
