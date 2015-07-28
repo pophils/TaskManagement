@@ -3,8 +3,7 @@
 from django.test import TestCase
 from django.core.urlresolvers import resolve
 from django.contrib.auth import get_user_model
-from yasana.controller.landing import LandingView, landing_task_summary
-from yasana.models import Task
+from yasana.controller.landing import LandingView
 
 
 class LandingViewTestCase(TestCase):
@@ -48,6 +47,12 @@ class LandingViewTestCase(TestCase):
         response = self.client.get('/')
         self.assertContains(response, 'class="summary-count users"')
 
+    def test_landing_summary_shows_manage_user_link_on_admin_login(self):
+        self.client.post('/account/login/', data={'email': 'admin@admin.com', 'password': 'admin'})
+
+        response = self.client.get('/')
+        self.assertContains(response, 'id="manage-user-link"')
+
     def test_landing_summary_does_not_show_user_summary_div_on_non_admin_login(self):
         self.client.post('/account/login/', data={'email': 'admin@admin.com', 'password': 'admin'})
         self.client.logout()
@@ -58,3 +63,14 @@ class LandingViewTestCase(TestCase):
         response = self.client.get('/')
 
         self.assertNotContains(response, 'class="summary-count users"')
+
+    def test_landing_summary_does_not_show_manage_user_link_on_non_admin_login(self):
+        self.client.post('/account/login/', data={'email': 'admin@admin.com', 'password': 'admin'})
+        self.client.logout()
+
+        self.User.objects.create_user(email='user1@gmail.com', first_name='User1', password='pass1')
+        self.client.login(username='user1@gmail.com', password='pass1')
+
+        response = self.client.get('/')
+
+        self.assertNotContains(response, 'id="manage-user-link"')

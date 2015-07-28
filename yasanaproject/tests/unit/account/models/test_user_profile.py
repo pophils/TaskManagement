@@ -25,6 +25,15 @@ class UserProfileTestCase(TestCase):
         self.assertEqual(user.email, first_user.email)
         self.assertEqual(user.first_name, first_user.first_name)
 
+    def test_user_can_save_capitalized_names(self):
+
+        user = self.User.objects.create(email='email@gmail.com', first_name='alan', password='pass1',
+                                        last_name='turin', other_name='ian')
+
+        self.assertEquals(user.first_name, 'Alan')
+        self.assertEquals(user.other_name, 'Ian')
+        self.assertEquals(user.last_name, 'Turin')
+
     def test_invalid_user_raise_validation_error(self):
         with self.assertRaises(ValidationError):
             user = self.User.objects.create(first_name='name1', password='pass1')
@@ -42,7 +51,16 @@ class UserProfileTestCase(TestCase):
     def test_get_full_name(self):
         user = self.User(email='email@gmail.com', first_name='name1', password='pass1', last_name='Brian',
                          other_name='Chesky')
-        self.assertEqual(user.get_full_name(), '%s %s, %s' % (user.first_name, user.other_name, user.last_name))
+        self.assertEqual(user.get_full_name().lower(), '%s, %s %s' % (user.last_name.lower(), user.first_name.lower(),
+                                                                      user.other_name.lower()))
+
+        user = self.User(email='email@gmail.com', first_name='name1', password='pass1',
+                         other_name='Chesky')
+        self.assertEqual(user.get_full_name().lower(), '%s %s' % (user.first_name.lower(), user.other_name.lower()))
+
+        user = self.User(email='email@gmail.com', first_name='name1', password='pass1', last_name='Brian')
+
+        self.assertEqual(user.get_full_name().lower(), '%s, %s' % (user.last_name.lower(), user.first_name.lower()))
 
     def test_user_profile_to_string(self):
         user = self.User(email='email@gmail.com', first_name='name1', password='pass1', last_name='Brian',

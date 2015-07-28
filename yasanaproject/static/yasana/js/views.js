@@ -13,8 +13,6 @@ yasana.views = yasana.views || {};
 
     mod.HomePage = Backbone.View.extend({
 
-        is_admin: undefined,
-
         el: ".main-content",
 
         initialize: function(){
@@ -28,10 +26,10 @@ yasana.views = yasana.views || {};
         checkIsAdmin: function () {
 
              if($('p.summary-count.users').length > 0){
-                    this.is_admin =true;
+                    yasana.utils.Constants.view.is_admin_login =true;
                 }
                 else{
-                    this.is_admin = false;
+                    yasana.utils.Constants.view.is_admin_login = false;
                 }
         },
 
@@ -50,11 +48,13 @@ yasana.views = yasana.views || {};
                 this.$el.empty().append(this.compiledTemplate);
             }
 
-            if(this.is_admin){
-                 yasana.utils.views.getJsonFromUrl('/landing-task-summary/', {is_admin:1}, this.renderCallback)
+            if(yasana.utils.Constants.view.is_admin_login){
+                 yasana.utils.views.getJsonFromUrl(yasana.utils.Constants.url.get_landing_task_summary,
+                     {is_admin:1}, this.renderCallback)
             }
             else{
-                yasana.utils.views.getJsonFromUrl('/landing-task-summary/', {is_admin:0}, this.renderCallback)
+                yasana.utils.views.getJsonFromUrl(yasana.utils.Constants.url.get_landing_task_summary,
+                    {is_admin:0}, this.renderCallback)
             }
         },
 
@@ -197,11 +197,12 @@ yasana.views = yasana.views || {};
 
             $.post("/api/new-user/", data, function (jsonMessage) {
 
-                if (jsonMessage == true) {
-                   alert(7657);
+                if (jsonMessage.save_status == true) {
+                   toastr.success('Model saved successfully.');
                 }
                 else {
-
+                    toastr.error(jsonMessage.save_status);
+                    console.log(jsonMessage.save_status);
                 }
             });
         },

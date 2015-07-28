@@ -64,8 +64,10 @@
        <li>Completed Task </li>
        <li>Pending Task</li>
        <li>Pending Task wall</li>
+       {% if perms.account.can_manage_users %}
        <li href="user-manager" id="manage-user-link">Manage users</li>
        <li> <a href="{% url 'account:manage_users' %}">Manage usersa</a></li>
+       {% endif %}
        <li> <a href="#">My profile</a></li>
    </ul>
 </div>

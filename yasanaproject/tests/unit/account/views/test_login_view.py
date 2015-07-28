@@ -125,7 +125,7 @@ class AuthenticationViewTestCase(TestCase):
 
         self.assertEqual(user.count(), 1)
         self.assertEqual(user[0].email, 'admin@admin.com')
-        self.assertEqual(user[0].first_name, 'admin')
+        self.assertEqual(user[0].first_name, 'Admin')  # name must have been capitalized before saving
 
     def test_login_does_not_create_admin_user_on_first_app_use_with_invalid_default_admin_credential(self):
         response = self.client.post('/account/login/', data={'email': 'adminmmin@admin.com', 'password': 'admin'})

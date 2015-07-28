@@ -89,15 +89,16 @@ yasana.utils = yasana.utils || {};
 
      $.extend(mod.Constants.url, {
          get_user_collection_partial_view: "partials/user-collection/",
-         get_add_user_partial_view: 'partials/add-user/'
+         get_add_user_partial_view: 'partials/add-user/',
+         get_landing_task_summary: 'api/task-summary/'
     });
 
     mod.Constants.view = mod.Constants.view || {};
 
     $.extend(mod.Constants.view, {
 
-        nav_link_clicked: null
-
+        nav_link_clicked: null,
+        is_admin_login: false
     });
 
 })($, Backbone, _,  yasana.utils);

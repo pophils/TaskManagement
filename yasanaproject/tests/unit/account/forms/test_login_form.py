@@ -2,7 +2,6 @@
 
 from django.test import TestCase
 from account.core.forms.login_form import LoginForm
-from django.contrib.auth import get_user_model
 
 
 class LoginFormTestCase(TestCase):
