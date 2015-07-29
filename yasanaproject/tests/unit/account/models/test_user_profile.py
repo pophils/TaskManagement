@@ -34,6 +34,13 @@ class UserProfileTestCase(TestCase):
         self.assertEquals(user.other_name, 'Ian')
         self.assertEquals(user.last_name, 'Turin')
 
+    def test_user_can_save_capitalized_department(self):
+
+        user = self.User.objects.create(email='email@gmail.com', first_name='alan', password='pass1',
+                                        last_name='turin', other_name='ian', department='computer science')
+
+        self.assertEquals(user.department, 'Computer science')
+
     def test_invalid_user_raise_validation_error(self):
         with self.assertRaises(ValidationError):
             user = self.User.objects.create(first_name='name1', password='pass1')

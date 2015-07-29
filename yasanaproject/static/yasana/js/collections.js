@@ -12,7 +12,7 @@ yasana.collections = yasana.collections || {};
 
     mod.UserCollections = Backbone.Collection.extend({
 
-        url:"/api/users/?pg_n=0",
+        url:"/api/users/?pg_no=0",
 
         model: models.User,
 

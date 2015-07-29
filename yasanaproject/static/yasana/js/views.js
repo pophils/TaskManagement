@@ -16,16 +16,15 @@ yasana.views = yasana.views || {};
         el: ".main-content",
 
         initialize: function(){
-
-            if($('.dashboard-summary-container').length > 0){
-                this.checkIsAdmin();
+            if($('#is_admin_user').length > 0){
+                this.checkIsAdmin(true);
             }
             this.compiledTemplate = yasana.utils.views.compileTemplate($('#dashboard').html());
         },
 
-        checkIsAdmin: function () {
+        checkIsAdmin: function (isAdmin) {
 
-             if($('p.summary-count.users').length > 0){
+             if(isAdmin){
                     yasana.utils.Constants.view.is_admin_login =true;
                 }
                 else{
@@ -68,7 +67,7 @@ yasana.views = yasana.views || {};
             $('p.summary-count.completed').text(data.completed);
             yasana.utils.Constants.view.nav_link_clicked = $('li#dashboard-link');
             yasana.utils.views.updateNavLinkActiveClass();
-            $("#loading-div").hide();
+            yasana.utils.views.hideLoading();
         }
     });
 
@@ -81,15 +80,20 @@ yasana.views = yasana.views || {};
         collection: collections.UserCollections,
 
         events: {
-            'click #new-user-btn' : 'loadNewUserForm'
+            'click #new-user-btn' : 'loadNewUserForm',
+            'click #load-more-user-btn' : 'loadMoreUsers'
         },
 
         initialize: function(){
+
+            yasana.utils.views.getJsonFromUrl(yasana.utils.Constants.url.get_total_users,
+                this.getTotalUserCallback);
 
             if(typeof localStorage.yasana_user_collection_partial_view == 'undefined'){
                 yasana.utils.views.getHtmlFromUrl(yasana.utils.Constants.url.get_user_collection_partial_view,
                 this.getHtmlFromUrlCallback);
             }
+            yasana.utils.Constants.view.get_users_page_no = 0;
         },
 
         loadNewUserForm : function(){
@@ -97,13 +101,16 @@ yasana.views = yasana.views || {};
                 this.newUserViewForm =  new mod.NewUserForm({model: new models.User()});
             }
             this.newUserViewForm.render();
-            window.newUserViewForm = this.newUserViewForm.model;
         },
 
         newUserViewForm : undefined,
 
         getHtmlFromUrlCallback: function(html){
             localStorage.yasana_user_collection_partial_view = html;
+        },
+
+        getTotalUserCallback: function(jsonMessage){
+            yasana.utils.Constants.view.current_total_users = parseInt(jsonMessage.num_of_users);
         },
 
         compiledTemplate: undefined,
@@ -131,7 +138,12 @@ yasana.views = yasana.views || {};
                                 var userRowView = new mod.UserRow({model:self.collection.at(k)});
                                 userRowView.render();
                             }
-                             yasana.utils.views.hideLoading();
+                            yasana.utils.views.hideLoading();
+                            yasana.utils.Constants.view.get_users_page_no += self.collection.length;
+
+                            if(yasana.utils.Constants.view.current_total_users <= self.collection.length){
+                                yasana.utils.views.hideLoadMoreBtn();
+                            }
                         },
                         error: function(e){
                             yasana.utils.views.hideLoading();
@@ -142,7 +154,33 @@ yasana.views = yasana.views || {};
             }, 3);
         },
 
-        timeoutInstance: undefined
+        timeoutInstance: undefined,
+
+        loadMoreUsers: function(){
+             this.collection.url = yasana.utils.Constants.url.get_user_collection +
+                 yasana.utils.Constants.view.get_users_page_no;
+
+             var self = this;
+
+             this.collection.fetch({
+                        success: function(e){
+                            for(var k = 0; k < self.collection.length; k++){
+                                var userRowView = new mod.UserRow({model:self.collection.at(k)});
+                                userRowView.render();
+                            }
+
+                            yasana.utils.Constants.view.get_users_page_no += self.collection.length;
+
+                             if(self.collection.length == 0){
+                                 toastr.info('No more user exist.');
+                                 yasana.utils.views.hideLoadMoreBtn();
+                            }
+                        },
+                        error: function(e){
+                            toastr.error(e + " error");
+                        }
+                    });
+        }
 
     });
 
@@ -162,21 +200,10 @@ yasana.views = yasana.views || {};
            this.$el.append(this.compiledTemplate({'user': this.model.toJSON()}));
         },
 
-        bindings: {
-
-	'.js-full-name'      : 'name',
-
-	'.js-address-line-1' : 'email',
-
-	'.js-address-line-2' : 'department',
-
-	'.js-city'           : 'imageSrc',
-
-	'.js-city'           : 'phone'
-
-}
+        renderFirst: function () {
+            this.$el.prepend(this.compiledTemplate({'user': this.model.toJSON()}));
+        }
     });
-
 
     mod.NewUserForm = Backbone.View.extend({
 
@@ -189,16 +216,40 @@ yasana.views = yasana.views || {};
         },
 
         submitUserForm: function(ev){
-             ev.preventDefault();
 
-             toastr.info('Saving form...');
+            ev.preventDefault();
+            var self = this;
 
-             var data = $(".popup-wrap form").serialize();
+            toastr.info('Saving form...');
+            var data = $(".popup-wrap form").serialize();
 
             $.post("/api/new-user/", data, function (jsonMessage) {
-
                 if (jsonMessage.save_status == true) {
-                   toastr.success('Model saved successfully.');
+                    toastr.success('User saved successfully.');
+
+                    //update full name
+                    var first_name = $(".popup-wrap #first_name").val();
+                    var last_name = $(".popup-wrap #last_name").val();
+                    var other_name = $(".popup-wrap #other_name").val();
+                    var full_name = "";
+
+                    if(last_name.length > 0){
+                        full_name = last_name.substring(0, 1).toUpperCase() + last_name.substring(1) + ", ";
+                    }
+
+                    if(first_name.length > 0){
+                        full_name += first_name.substring(0, 1).toUpperCase() + first_name.substring(1) + " ";
+                    }
+
+                    if(other_name.length > 0){
+                        full_name += other_name.substring(0, 1).toUpperCase() + other_name.substring(1);
+                    }
+
+                    self.model.set('name', full_name);
+
+                    new mod.UserRow({model:self.model}).renderFirst();
+                    yasana.utils.Constants.view.get_users_page_no += 1;
+                    yasana.utils.views.closePopup();
                 }
                 else {
                     toastr.error(jsonMessage.save_status);
@@ -241,9 +292,7 @@ yasana.views = yasana.views || {};
             }, 3);
         },
 
-        timeoutInstance: undefined,
-
-
+        timeoutInstance: undefined
     });
 
 })($, Backbone, _, yasana.collections, yasana.models, yasana.views);

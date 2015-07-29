@@ -60,6 +60,8 @@ class UserProfile(AbstractBaseEntity, AbstractBaseUser, PermissionsMixin):
             self.other_name = self.other_name.capitalize()
         if self.last_name:
             self.last_name = self.last_name.capitalize()
+        if self.department:
+            self.department = self.department.capitalize()
 
         super().save(*args, **kwargs)
 

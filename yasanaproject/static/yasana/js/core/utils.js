@@ -25,14 +25,6 @@ yasana.utils = yasana.utils || {};
             }
         },
 
-        destroyAllEvents: function(view){
-
-            if(typeof view != "undefined"){
-                view.undelegateEvent();
-                view.unbind();
-            }
-        },
-
         getHtmlFromUrl :function(url, callback){
 
             if(typeof url == "string"){
@@ -51,13 +43,19 @@ yasana.utils = yasana.utils || {};
         },
 
         getJsonFromUrl: function(url, data, callback){
-            if(url && url.length > 0){
-                   $.getJSON(url, data, function (data) {
-                   if (data != null) {
-                       callback(data);
-                    }
-                });
+            if(typeof url == "string"){
+                if(url && url.length > 0){
+                    $.getJSON(url, data, function (data) {
+                        if (data != null) {
+                            callback(data);
+                        }
+                    });
+                }
             }
+            else{
+                throw TypeError("Url must be a string");
+            }
+
         },
 
         updateNavLinkActiveClass: function(){
@@ -73,6 +71,10 @@ yasana.utils = yasana.utils || {};
             $("#loading-div").hide();
         },
 
+        hideLoadMoreBtn: function(){
+            $("#load-more-user-btn").hide();
+        },
+
         displayNoItem: function(){
             $("div.grid-rows").append($('<div id="grid-rows-no-items">No items found</div>'));
         },
@@ -81,7 +83,38 @@ yasana.utils = yasana.utils || {};
             $(".popup-close").click(function(ev){
                  $(".popup-wrap").trigger('close');
             });
+        },
+
+        closePopup: function(){
+           $(".popup-wrap").trigger('close');
+        },
+
+        ajaxCSRFSetUp: function(){
+               $.ajaxSetup({
+                   beforeSend: function(xhr, settings) {
+                       function getCookie(name) {
+                           var cookieValue = null;
+                           if (document.cookie && document.cookie != '') {
+                               var cookies = document.cookie.split(';');
+                               for (var i = 0; i < cookies.length; i++) {
+                                   var cookie = jQuery.trim(cookies[i]);
+                                   // Does this cookie string begin with the name we want?
+                                   if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                       cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                       break;
+                                   }
+                               }
+                           }
+                           return cookieValue;
+                       }
+                       if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                           // Only send the token to relative URLs i.e. locally.
+                           xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                       }
+                   }
+               });
         }
+
     });
 
     mod.Constants = mod.Constants || {};
@@ -90,15 +123,18 @@ yasana.utils = yasana.utils || {};
      $.extend(mod.Constants.url, {
          get_user_collection_partial_view: "partials/user-collection/",
          get_add_user_partial_view: 'partials/add-user/',
-         get_landing_task_summary: 'api/task-summary/'
+         get_landing_task_summary: 'api/task-summary/',
+         get_user_collection:"/api/users/?pg_no=",
+         get_total_users:"/api/total-users/"
     });
 
     mod.Constants.view = mod.Constants.view || {};
 
     $.extend(mod.Constants.view, {
-
         nav_link_clicked: null,
-        is_admin_login: false
+        is_admin_login: false,
+        get_users_page_no: 0,
+        current_total_users: 0
     });
 
 })($, Backbone, _,  yasana.utils);

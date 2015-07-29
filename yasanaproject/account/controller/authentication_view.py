@@ -26,7 +26,9 @@ def signin(request):
 
             if get_user_model().objects.count() == 0:
                 if email == 'admin@admin.com' and password == 'admin':
-                    get_user_model().objects.create_user(email=email, first_name='admin', password=password)
+                    get_user_model().objects.create_user(email=email, first_name='admin', password=password,
+                                                         is_admin=True)
+
                     logged_user = authenticate(username=email, password=password)
                     login(request, logged_user)
                     logged_user.user_permissions.add(Permission.objects.get(codename='can_manage_users'))
