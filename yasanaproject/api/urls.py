@@ -9,4 +9,5 @@ urlpatterns = patterns('',
                        url(r'^new-user/', api_get_users, name='api_get_users1'),
                        url(r'^task-summary/', task_summary, name='task_summary_on_landing'),
                        url(r'^total-users/', get_users_total_count, name='total_users'),
+                       # url(r'^update-user/', update_user, name='update_user'),
                        )

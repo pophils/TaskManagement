@@ -3,7 +3,10 @@
 from django.test import TestCase
 from django.core.urlresolvers import resolve
 from django.contrib.auth import get_user_model
+from django.test.client import MULTIPART_CONTENT, BOUNDARY, encode_multipart
+from rest_framework.test import APIClient
 from api.controller.account import api_get_users, get_users_total_count
+from unittest import skip
 
 
 class UserManagementApiTestCase(TestCase):
@@ -168,3 +171,50 @@ class UserManagementApiTestCase(TestCase):
 
         self.assertContains(response, 3)
         self.assertNotContains(response, 4)
+
+    def test_api_users_can_delete_user_on_delete_request(self):
+
+        client = APIClient()
+
+        self.client.post('/api/users/', data={'first_name': 'name1', 'last_name': 'name2',
+                                              'other_name': 'name3', 'phone': '090896272',
+                                              'gender': 'm', 'department': 'Deep Learning',
+                                              'email': 'name@name.com', 'password': 'pass1',
+                                              'confirm_password': 'pass1'
+                                              })
+
+        client.delete('/api/users/', data={'email': 'name@name.com'}, format='json')
+
+        self.assertEqual(get_user_model().objects.count(), 0)
+
+    def test_api_users_cannot_delete_on_invalid_user_on_delete_request(self):
+
+        client = APIClient()
+
+        self.client.post('/api/users/', data={'first_name': 'name1', 'last_name': 'name2',
+                                              'other_name': 'name3', 'phone': '090896272',
+                                              'gender': 'm', 'department': 'Deep Learning',
+                                              'email': 'name@name.com', 'password': 'pass1',
+                                              'confirm_password': 'pass1'
+                                              })
+
+        response = client.delete('/api/users/', data={'email': 'nam2e@name.com'}, format='json')
+
+        self.assertEqual(get_user_model().objects.count(), 1)
+        self.assertEqual(response.data, {'save_status': False})
+
+    def test_api_users_can_update_on_valid_data_put_request(self):
+        client = APIClient()
+        self.client.post('/api/users/', data={'first_name': 'name1', 'last_name': 'name2',
+                                              'other_name': 'name3', 'phone': '090896272',
+                                              'gender': 'm', 'department': 'Deep Learning',
+                                              'email': 'name@name.com', 'password': 'pass1',
+                                              'confirm_password': 'pass1'
+                                              })
+
+        response = client.put('/api/users/', data={'first_name': 'name2', 'last_name': 'larry',
+                                                   'other_name': 'page', 'phone': '0768040383',
+                                                   'gender': "f", 'department': 'Deep Learning.',
+                                                   'email': 'name@name.com'}, format='json')
+
+        self.assertEqual(response.data, {'save_status': True})

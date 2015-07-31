@@ -81,7 +81,49 @@ yasana.views = yasana.views || {};
 
         events: {
             'click #new-user-btn' : 'loadNewUserForm',
-            'click #load-more-user-btn' : 'loadMoreUsers'
+            'click #load-more-user-btn' : 'loadMoreUsers',
+            'click .btn.btn-primary' : 'editUser',
+            'click .btn.btn-danger' : 'deleteUser'
+        },
+
+        editUser: function(ev){
+
+            var email = $(ev.target).parent().parent().find('.stickit_email').text();
+            var modelTobeEdited = yasana.utils.Constants.view.current_user_collection.get(email);
+            var editUserView = new mod.EditUserForm({model: modelTobeEdited, btnTarget: ev.target});
+            yasana.utils.views.unbindPopupViewEvent(editUserView);
+            editUserView.render();
+        },
+
+        deleteUser: function(ev){
+            var email = $(ev.target).parent().parent().find('.stickit_email').text();
+            var modelTobeEdited = yasana.utils.Constants.view.current_user_collection.get(email);
+
+             $.ajax({
+                url:'/api/users/',
+                type: 'DELETE',
+                data: {email: email},
+                success: function(jsonMessage){
+                    if (jsonMessage.save_status == true) {
+                        toastr.success('User deleted successfully.');
+
+                        yasana.utils.Constants.view.get_users_page_no -= 1;
+                        yasana.utils.Constants.view.current_user_collection.remove(modelTobeEdited);
+                        modelTobeEdited = undefined;
+
+                        $(ev.target).parent().parent().remove();
+                    }
+                    else {
+                        toastr.error(jsonMessage.save_status);
+                        console.log(jsonMessage.save_status);
+                    }
+                },
+                error: function(){
+
+                }
+
+            });
+
         },
 
         initialize: function(){
@@ -100,6 +142,7 @@ yasana.views = yasana.views || {};
             if(typeof this.newUserViewForm == 'undefined'){
                 this.newUserViewForm =  new mod.NewUserForm({model: new models.User()});
             }
+            yasana.utils.views.unbindPopupViewEvent(this.newUserViewForm);
             this.newUserViewForm.render();
         },
 
@@ -144,6 +187,8 @@ yasana.views = yasana.views || {};
                             if(yasana.utils.Constants.view.current_total_users <= self.collection.length){
                                 yasana.utils.views.hideLoadMoreBtn();
                             }
+
+                            yasana.utils.Constants.view.current_user_collection = self.collection;
                         },
                         error: function(e){
                             yasana.utils.views.hideLoading();
@@ -157,24 +202,30 @@ yasana.views = yasana.views || {};
         timeoutInstance: undefined,
 
         loadMoreUsers: function(){
-             this.collection.url = yasana.utils.Constants.url.get_user_collection +
-                 yasana.utils.Constants.view.get_users_page_no;
 
-             var self = this;
+             var new_coll = new collections.UserCollections();
 
-             this.collection.fetch({
+            new_coll.url = yasana.utils.Constants.url.get_user_collection + yasana.utils.Constants.view.get_users_page_no;
+            new_coll.fetch({
                         success: function(e){
-                            for(var k = 0; k < self.collection.length; k++){
-                                var userRowView = new mod.UserRow({model:self.collection.at(k)});
+
+                            for(var k = 0; k < new_coll.length; k++){
+                                var userRowView = new mod.UserRow({model:new_coll.at(k)});
                                 userRowView.render();
+                                if(typeof yasana.utils.Constants.view.current_user_collection == "undefined"){
+                                    yasana.utils.Constants.view.current_user_collection = new collections.UserCollections();
+                                }
+
+                                yasana.utils.Constants.view.current_user_collection.push(userRowView.model);
                             }
 
-                            yasana.utils.Constants.view.get_users_page_no += self.collection.length;
+                            yasana.utils.Constants.view.get_users_page_no += new_coll.length;
 
-                             if(self.collection.length == 0){
+                             if(new_coll.length == 0){
                                  toastr.info('No more user exist.');
                                  yasana.utils.views.hideLoadMoreBtn();
                             }
+                            delete new_coll
                         },
                         error: function(e){
                             toastr.error(e + " error");
@@ -228,28 +279,39 @@ yasana.views = yasana.views || {};
                     toastr.success('User saved successfully.');
 
                     //update full name
-                    var first_name = $(".popup-wrap #first_name").val();
-                    var last_name = $(".popup-wrap #last_name").val();
-                    var other_name = $(".popup-wrap #other_name").val();
-                    var full_name = "";
+                     var first_name = self.model.get('first_name');//  $(".popup-wrap #first_name").val();
+                        var last_name = self.model.get('last_name'); // $(".popup-wrap #last_name").val();
+                        var other_name = self.model.get('other_name'); //$(".popup-wrap #other_name").val();
+                        var department = self.model.get('department'); // $(".popup-wrap #department").val();
+                        var full_name = "";
 
-                    if(last_name.length > 0){
-                        full_name = last_name.substring(0, 1).toUpperCase() + last_name.substring(1) + ", ";
-                    }
+                        if(last_name.length > 0){
+                            full_name = last_name.substring(0, 1).toUpperCase() + last_name.substring(1) + ", ";
+                        }
 
-                    if(first_name.length > 0){
-                        full_name += first_name.substring(0, 1).toUpperCase() + first_name.substring(1) + " ";
-                    }
+                        if(first_name.length > 0){
+                            full_name += first_name.substring(0, 1).toUpperCase() + first_name.substring(1) + " ";
+                        }
 
-                    if(other_name.length > 0){
-                        full_name += other_name.substring(0, 1).toUpperCase() + other_name.substring(1);
-                    }
+                        if(other_name.length > 0){
+                            full_name += other_name.substring(0, 1).toUpperCase() + other_name.substring(1);
+                        }
+
+                        if(department.length > 0){
+                            department = department.substring(0, 1).toUpperCase() + department.substring(1);
+                        }
+
+                        self.model.set('department', department);
 
                     self.model.set('name', full_name);
 
                     new mod.UserRow({model:self.model}).renderFirst();
                     yasana.utils.Constants.view.get_users_page_no += 1;
                     yasana.utils.views.closePopup();
+                    if(typeof yasana.utils.Constants.view.current_user_collection == "undefined"){
+                        yasana.utils.Constants.view.current_user_collection = new collections.UserCollections();
+                    }
+                    yasana.utils.Constants.view.current_user_collection.push(self.model);
                 }
                 else {
                     toastr.error(jsonMessage.save_status);
@@ -271,10 +333,13 @@ yasana.views = yasana.views || {};
         },
 
         bindings: {
-            '#full_name' : 'name',
             '#email': 'email',
             '#department' : 'department',
-            '#phone' : 'phone'
+            '#phone' : 'phone',
+            '#first_name' : 'first_name',
+            '#other_name' : 'other_name',
+            '#last_name' : 'last_name',
+            '#website': 'website'
         },
 
         render: function(){
@@ -284,6 +349,123 @@ yasana.views = yasana.views || {};
             self.timeoutInstance = setInterval(function(){
                 if (typeof localStorage.formPopup != "undefined"){
                     self.$el.empty().append(localStorage.formPopup).show();
+                    self.$el.lightbox_me({ centered: true, lightboxSpeed: "fast" });
+                    yasana.utils.views.initClosePopupClickEvent();
+                    clearInterval(self.timeoutInstance);
+                    self.stickit();
+                }
+            }, 3);
+        },
+
+        timeoutInstance: undefined
+    });
+
+    mod.EditUserForm = Backbone.View.extend({
+
+        model: models.User,
+
+        el: '.popup-wrap',
+
+        events: {
+            'click #submit-user':'submitUserForm'
+        },
+
+        submitUserForm: function(ev){
+            ev.preventDefault();
+
+            var self = this;
+
+           toastr.info('Updating form...');
+
+           var data = $(".popup-wrap form").serialize();
+            $.ajax({
+                url:'/api/users/',
+                type: 'PUT',
+                data: data,
+                success: function(jsonMessage){
+                    if (jsonMessage.save_status == true) {
+                        toastr.success('User saved successfully.');
+
+                        //update values on grid
+                        var first_name = self.model.get('first_name');//  $(".popup-wrap #first_name").val();
+                        var last_name = self.model.get('last_name'); // $(".popup-wrap #last_name").val();
+                        var other_name = self.model.get('other_name'); //$(".popup-wrap #other_name").val();
+                        var department = self.model.get('department'); // $(".popup-wrap #department").val();
+                        var full_name = "";
+
+                        if(last_name.length > 0){
+                            full_name = last_name.substring(0, 1).toUpperCase() + last_name.substring(1) + ", ";
+                        }
+
+                        if(first_name.length > 0){
+                            full_name += first_name.substring(0, 1).toUpperCase() + first_name.substring(1) + " ";
+                        }
+
+                        if(other_name.length > 0){
+                            full_name += other_name.substring(0, 1).toUpperCase() + other_name.substring(1);
+                        }
+
+                        if(department.length > 0){
+                            department = department.substring(0, 1).toUpperCase() + department.substring(1);
+                        }
+
+                        self.model.set('name', full_name);
+                        self.model.set('gender',$(".popup-wrap #gender").val());
+
+                        $(self.btnTarget).parent().parent().find('.stickit_name').text(full_name);
+                        $(self.btnTarget).parent().parent().find('.stickit_department').text(department);
+                        $(self.btnTarget).parent().parent().find('.stickit_phone').text($(".popup-wrap #phone").val());
+
+                        yasana.utils.views.closePopup();
+                    }
+                    else {
+                        toastr.error(jsonMessage.save_status);
+                        console.log(jsonMessage.save_status);
+                    }
+                },
+                error: function(){
+
+                }
+
+            });
+
+        },
+
+        initialize: function(options){
+            _.extend(this, _.pick(options, "btnTarget"));
+             if(typeof localStorage.formPopup == "undefined"){
+                yasana.utils.views.getHtmlFromUrl(yasana.utils.Constants.url.get_add_user_partial_view,
+                this.loadNewUserFormCallback);
+            }
+        },
+
+        loadNewUserFormCallback: function(template){
+            var ss = jQuery("<div/>").append(template);
+            localStorage.formPopup = $(ss).html();
+        },
+
+        bindings: {
+            '#email': 'email',
+            '#department' : 'department',
+            '#phone' : 'phone',
+            '#first_name' : 'first_name',
+            '#other_name' : 'other_name',
+            '#last_name' : 'last_name',
+            '#website': 'website'
+        },
+
+        render: function(){
+
+            var self = this;
+
+            self.timeoutInstance = setInterval(function(){
+                if (typeof localStorage.formPopup != "undefined"){
+                    self.$el.empty().append(localStorage.formPopup).show();
+                    self.$el.find('hr').remove();
+                    self.$el.find('#password').remove();
+                    self.$el.find('#confirm_password').remove();
+                    self.$el.find('#email').hide();
+                    self.$el.find("#gender").val(self.model.get('gender'));
                     self.$el.lightbox_me({ centered: true, lightboxSpeed: "fast" });
                     yasana.utils.views.initClosePopupClickEvent();
                     clearInterval(self.timeoutInstance);

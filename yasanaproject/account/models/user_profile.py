@@ -65,7 +65,6 @@ class UserProfile(AbstractBaseEntity, AbstractBaseUser, PermissionsMixin):
 
         super().save(*args, **kwargs)
 
-
     class Meta:
         db_table = 'UserProfile'
         permissions = (

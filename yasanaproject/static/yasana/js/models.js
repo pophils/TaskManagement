@@ -15,7 +15,11 @@ yasana.models = yasana.models || {};
             "email":"",
             "phone":"",
             "department":"",
-            "imageSrc":""
+            "imageSrc":"",
+            "first_name": "",
+            "other_name" : "",
+            "website" : "",
+            "gender": ""
         },
 
         idAttribute: "email"

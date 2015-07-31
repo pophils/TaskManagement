@@ -58,6 +58,22 @@ yasana.utils = yasana.utils || {};
 
         },
 
+        unbindPopupViewEvent: function(view){
+            if (typeof view != "undefined"){
+
+                if(mod.Constants.view.popupView){
+                    mod.Constants.view.popupView.$el.empty();//remove();
+                    mod.Constants.view.popupView.undelegateEvents();
+                    mod.Constants.view.popupView.unbind();
+                    if(mod.Constants.view.popupView.close){
+                        mod.Constants.view.popupView.close();
+                    }
+            }
+            mod.Constants.view.popupView = view;
+
+            }
+        },
+
         updateNavLinkActiveClass: function(){
             $('#nav_link_ul').find('li.active').removeClass('active');
             $(mod.Constants.view.nav_link_clicked).addClass('active');
@@ -134,7 +150,9 @@ yasana.utils = yasana.utils || {};
         nav_link_clicked: null,
         is_admin_login: false,
         get_users_page_no: 0,
-        current_total_users: 0
+        current_total_users: 0,
+        current_user_collection: undefined,
+        popupView : undefined
     });
 
 })($, Backbone, _,  yasana.utils);
