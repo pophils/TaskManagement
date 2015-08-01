@@ -133,6 +133,69 @@ yasana.utils = yasana.utils || {};
 
     });
 
+
+    mod.helpers = mod.helpers || {};
+
+    $.extend(mod.helpers, {
+
+        validateEmail: function(email){
+            var emailRegex = /^[ ]*\w+([-+.']\w+)*@\w+([-.]\\w+)*\.\w+([-.]\w+)*[ ]*$/i;
+            return emailRegex.test(email);
+        },
+
+        validatePhone: function(phone){
+            var phoneRegex = /^[0-9+][ ]*[0-9][0-9\s+]+$/i;
+            phone = $.trim(phone).replace(/\s+/g, '');
+            return phoneRegex.test(phone);
+        },
+
+        validateGender: function(gender){
+
+            return gender == 'm' || gender == 'f' || gender == 'p';
+        },
+
+        validateFirstName: function(firstName){
+            if(typeof firstName == "undefined"){
+                return false;
+            }
+            else if(typeof firstName != "undefined" && firstName.length < 1){
+                return false;
+            }
+
+            return true;
+        },
+
+        validatePassword: function(password){
+            if(typeof password == "undefined"){
+                return false;
+            }
+            else if(typeof password != "undefined" && password.length < 1){
+                return false;
+            }
+
+            return true;
+        },
+
+        validateConfirmPassword: function(confirmPassword){
+            if(typeof confirmPassword == "undefined"){
+                return false;
+            }
+            else if(typeof confirmPassword != "undefined" && confirmPassword.length < 1){
+                return false;
+            }
+
+            return true;
+        },
+
+        validatePasswordMatch: function(password, confirmPassword){
+
+            return confirmPassword == password;
+        }
+
+    });
+
+
+
     mod.Constants = mod.Constants || {};
     mod.Constants.url = mod.Constants.url || {};
 

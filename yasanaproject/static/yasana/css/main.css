@@ -398,9 +398,16 @@ font-size: 22px;
   overflow-y: auto;
 }
 .popup-wrap form input, .popup-wrap form select{
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .popup-wrap form .error-p, .popup-wrap form #submit-user{
     margin-bottom: 0px;
+}
+
+.popup-wrap .form_error{
+    color: #EB2424;
+    font-size: 13px;
+    margin-top: -20px;
+  margin-bottom: 45px;
 }

@@ -1,9 +1,8 @@
 
 
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
 from .page_exception import PageException
 from .base_page import BasePage
+from .landing import LandingPage
 
 
 class LoginPage(BasePage):
@@ -19,7 +18,7 @@ class LoginPage(BasePage):
         except:
             raise PageException('Login page not loaded')
 
-    def fill_login_form(self):
+    def login_user(self, email, password):
         email_field = self.browser.find_element_by_id('email')
         if not self.is_element_visible_and_enabled(email_field):
             raise PageException('Email field not found on login page.')
@@ -32,22 +31,10 @@ class LoginPage(BasePage):
         if not self.is_element_visible_and_enabled(submit_field):
             raise PageException('Submit field not found on login page.')
 
+        email_field.send_keys(email)
+        password_field.send_keys(password)
+        submit_field.click()
 
+        self.wait_for_element_with_id('dashboard-link', 5)
 
-
-
-
-
-    # def visit_index_page(self, url, element_id_to_wait_for):
-    #     if not isinstance(url, str):
-    #         raise TypeError('url is of type {}, expected str'. format(type(url)))
-    #
-    #     self.browser.get(url)
-    #     self.wait_for_element_with_id('login-form')
-    #     return self  # done to aid method chaining
-
-    # def visit_about_page(self):
-    #     about_us_link = self.browser.find_element_by_id('about-us')
-    #     self.is_element_visible_and_enabled(about_us_link)
-    #     about_us_link.click()
-    #     return AboutPage(about_us_link.)
+        return LandingPage(self.browser)

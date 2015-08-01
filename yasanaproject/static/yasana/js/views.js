@@ -138,7 +138,15 @@ yasana.views = yasana.views || {};
             yasana.utils.Constants.view.get_users_page_no = 0;
         },
 
-        loadNewUserForm : function(){
+        loadNewUserForm : function(event){
+
+            if(event.preventDefault){
+                event.preventDefault();
+            }
+            else{
+                event.returnValue = false;
+            }
+
             if(typeof this.newUserViewForm == 'undefined'){
                 this.newUserViewForm =  new mod.NewUserForm({model: new models.User()});
             }
@@ -271,6 +279,49 @@ yasana.views = yasana.views || {};
             ev.preventDefault();
             var self = this;
 
+            var first_name = this.model.get('first_name');
+            if (yasana.utils.helpers.validateFirstName(first_name) == false){
+
+                toastr.error('Please enter the first name.');
+                return;
+            }
+
+            if ( this.model.get('phone').length > 0 && yasana.utils.helpers.validatePhone(this.model.get('phone'))
+                == false){
+                toastr.error('Please enter a valid phone number');
+                return;
+            }
+
+            self.model.set('gender', self.$el.find("#gender").val());
+
+             if (yasana.utils.helpers.validateGender(this.model.get('gender')) == false){
+                toastr.error('Please select a valid gender');
+                return;
+            }
+
+             if (yasana.utils.helpers.validateEmail(this.model.get('email')) == false){
+                toastr.error('Please enter a valid email');
+                return;
+            }
+
+            var password = self.$el.find("#password").val();
+            var confirmPassword = self.$el.find("#confirm_password").val();
+
+             if (yasana.utils.helpers.validatePassword(password) == false){
+                toastr.error('Password is required');
+                return;
+            }
+
+             if (yasana.utils.helpers.validatePassword(confirmPassword) == false){
+                toastr.error('Confirm Password is required');
+                return;
+            }
+
+             if (yasana.utils.helpers.validatePasswordMatch(password, confirmPassword) == false){
+                toastr.error('Password does not match');
+                return;
+            }
+
             toastr.info('Saving form...');
             var data = $(".popup-wrap form").serialize();
 
@@ -279,7 +330,6 @@ yasana.views = yasana.views || {};
                     toastr.success('User saved successfully.');
 
                     //update full name
-                     var first_name = self.model.get('first_name');//  $(".popup-wrap #first_name").val();
                         var last_name = self.model.get('last_name'); // $(".popup-wrap #last_name").val();
                         var other_name = self.model.get('other_name'); //$(".popup-wrap #other_name").val();
                         var department = self.model.get('department'); // $(".popup-wrap #department").val();
@@ -314,8 +364,11 @@ yasana.views = yasana.views || {};
                     yasana.utils.Constants.view.current_user_collection.push(self.model);
                 }
                 else {
-                    toastr.error(jsonMessage.save_status);
-                    console.log(jsonMessage.save_status);
+                    errorMessages = '';
+                    _.forEach(jsonMessage.save_status, function(error){
+                        errorMessages += error +'/n';
+                    });
+                     toastr.error(errorMessages);
                 }
             });
         },
@@ -375,6 +428,26 @@ yasana.views = yasana.views || {};
 
             var self = this;
 
+            var first_name = this.model.get('first_name');
+            if (yasana.utils.helpers.validateFirstName(first_name) == false){
+
+                toastr.error('Please enter the first name.');
+                return;
+            }
+
+            if ( this.model.get('phone').length > 0 && yasana.utils.helpers.validatePhone(this.model.get('phone'))
+                == false){
+                toastr.error('Please enter a valid phone number');
+                return;
+            }
+
+            self.model.set('gender', self.$el.find("#gender").val());
+
+             if (yasana.utils.helpers.validateGender(this.model.get('gender')) == false){
+                toastr.error('Please select a valid gender');
+                return;
+            }
+
            toastr.info('Updating form...');
 
            var data = $(".popup-wrap form").serialize();
@@ -384,7 +457,7 @@ yasana.views = yasana.views || {};
                 data: data,
                 success: function(jsonMessage){
                     if (jsonMessage.save_status == true) {
-                        toastr.success('User saved successfully.');
+                        toastr.success('User updated successfully.');
 
                         //update values on grid
                         var first_name = self.model.get('first_name');//  $(".popup-wrap #first_name").val();
@@ -419,8 +492,11 @@ yasana.views = yasana.views || {};
                         yasana.utils.views.closePopup();
                     }
                     else {
-                        toastr.error(jsonMessage.save_status);
-                        console.log(jsonMessage.save_status);
+                         errorMessages = '';
+                    _.forEach(jsonMessage.save_status, function(error){
+                        errorMessages += error +'/n';
+                    });
+                     toastr.error(errorMessages);
                     }
                 },
                 error: function(){

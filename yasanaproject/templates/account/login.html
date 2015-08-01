@@ -20,7 +20,7 @@
      <form action="{% url 'account:login' %}" method="post" id="login-form">
         {% csrf_token %}
      <p>
-        <input type="text" name="email" placeholder="Please enter your email" maxlength="255"
+        <input type="text" name="email" id="email" placeholder="Please enter your email" maxlength="255"
                  {% if login_form.email.value %}
                      value = '{{ login_form.email.value }}'
                  {% endif %}
@@ -30,14 +30,14 @@
         {% endif %}
          </p>
      <p>
-        <input type="password" name='password' maxlength="255" placeholder="Please enter your password">
+        <input type="password" name='password' id="password" maxlength="255" placeholder="Please enter your password">
      {% if login_form.password.errors %}
              <label style="color:rgb(218, 9, 9);"> {{ login_form.password.errors.0 }}</label>
         {% endif %}
      </p>
 
      <p>
-        <input type="submit" value="Login" id="submit-login">
+        <input type="submit" value="Login" id="submit-btn">
      </p>
 
         <label style="color: rgb(218, 9, 9);">

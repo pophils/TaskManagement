@@ -34,6 +34,14 @@ class BasePage(object):
             until(lambda b: b.find_element_by_id(element_id),
                   'Element with id: {} could not be found'.format(element_id))
 
+    def wait_for_element_with_class_name(self, class_name, timeout=15):
+        WebDriverWait(self.browser, timeout).\
+            until(lambda b: b.find_element_by_class_name(class_name),
+                  'Element with class name: {} could not be found'.format(class_name))
+
+    def get_body_content(self):
+        return self.browser.find_element_by_tag_name('body').text
+
     @staticmethod
     def is_element_visible(element):
         return element.is_displayed()
