@@ -147,14 +147,10 @@ yasana.views = yasana.views || {};
                 event.returnValue = false;
             }
 
-            if(typeof this.newUserViewForm == 'undefined'){
-                this.newUserViewForm =  new mod.NewUserForm({model: new models.User()});
-            }
-            yasana.utils.views.unbindPopupViewEvent(this.newUserViewForm);
-            this.newUserViewForm.render();
+            var newUserViewForm =  new mod.NewUserForm({model: new models.User()});
+            yasana.utils.views.unbindPopupViewEvent(newUserViewForm);
+            newUserViewForm.render();
         },
-
-        newUserViewForm : undefined,
 
         getHtmlFromUrlCallback: function(html){
             localStorage.yasana_user_collection_partial_view = html;
@@ -362,6 +358,9 @@ yasana.views = yasana.views || {};
                         yasana.utils.Constants.view.current_user_collection = new collections.UserCollections();
                     }
                     yasana.utils.Constants.view.current_user_collection.push(self.model);
+                    // dereferencing the formPopup will allow a new form with a new csrf token to be fetched
+                    delete localStorage.formPopup;
+
                 }
                 else {
                     errorMessages = '';
@@ -461,10 +460,10 @@ yasana.views = yasana.views || {};
                         toastr.success('User updated successfully.');
 
                         //update values on grid
-                        var first_name = self.model.get('first_name');//  $(".popup-wrap #first_name").val();
-                        var last_name = self.model.get('last_name'); // $(".popup-wrap #last_name").val();
-                        var other_name = self.model.get('other_name'); //$(".popup-wrap #other_name").val();
-                        var department = self.model.get('department'); // $(".popup-wrap #department").val();
+                        var first_name = self.model.get('first_name');
+                        var last_name = self.model.get('last_name');
+                        var other_name = self.model.get('other_name');
+                        var department = self.model.get('department');
                         var full_name = "";
 
                         if(last_name.length > 0){
@@ -491,6 +490,7 @@ yasana.views = yasana.views || {};
                         $(self.btnTarget).parent().parent().find('.stickit_phone').text($(".popup-wrap #phone").val());
 
                         yasana.utils.views.closePopup();
+                        delete localStorage.formPopup;
                     }
                     else {
                          errorMessages = '';
