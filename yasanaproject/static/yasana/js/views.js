@@ -312,7 +312,7 @@ yasana.views = yasana.views || {};
                 return;
             }
 
-             if (yasana.utils.helpers.validatePassword(confirmPassword) == false){
+             if (yasana.utils.helpers.validateConfirmPassword(confirmPassword) == false){
                 toastr.error('Confirm Password is required');
                 return;
             }
@@ -402,6 +402,7 @@ yasana.views = yasana.views || {};
             self.timeoutInstance = setInterval(function(){
                 if (typeof localStorage.formPopup != "undefined"){
                     self.$el.empty().append(localStorage.formPopup).show();
+                    $('.popup-header-text').text('Add User');
                     self.$el.lightbox_me({ centered: true, lightboxSpeed: "fast" });
                     yasana.utils.views.initClosePopupClickEvent();
                     clearInterval(self.timeoutInstance);
@@ -540,6 +541,7 @@ yasana.views = yasana.views || {};
                     self.$el.find('hr').remove();
                     self.$el.find('#password').remove();
                     self.$el.find('#confirm_password').remove();
+                     $('.popup-header-text').text('Edit User');
                     self.$el.find('#email').hide();
                     self.$el.find("#gender").val(self.model.get('gender'));
                     self.$el.lightbox_me({ centered: true, lightboxSpeed: "fast" });
