@@ -82,7 +82,7 @@ def api_get_tasks(request):
             task = form.save(commit=False)
             task.created_by = request.user
             task.save()
-            return Response({'save_status': True}, status=api_status.HTTP_200_OK)
+            return Response({'save_status': True, 'id': task.id}, status=api_status.HTTP_200_OK)
         return Response({'save_status': form.errors}, status=api_status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'PUT':

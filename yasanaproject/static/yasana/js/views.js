@@ -283,7 +283,7 @@ yasana.views = yasana.views || {};
             var self = this;
 
             var first_name = this.model.get('first_name');
-            if (yasana.utils.helpers.validateFirstName(first_name) == false){
+            if (yasana.utils.helpers.validateRequired(first_name) == false){
 
                 toastr.error('Please enter the first name.');
                 return;
@@ -436,7 +436,7 @@ yasana.views = yasana.views || {};
             var self = this;
 
             var first_name = this.model.get('first_name');
-            if (yasana.utils.helpers.validateFirstName(first_name) == false){
+            if (yasana.utils.helpers.validateRequired(first_name) == false){
 
                 toastr.error('Please enter the first name.');
                 return;
@@ -570,12 +570,12 @@ yasana.views = yasana.views || {};
 
         collection: collections.PendingTaskCollections,
 
-        //events: {
-        //    'click #new-user-btn' : 'loadNewUserForm',
-        //    'click #load-more-user-btn' : 'loadMoreUsers',
-        //    'click .btn.btn-primary' : 'editUser',
-        //    'click .btn.btn-danger' : 'deleteUser'
-        //},
+        events: {
+            'click #new-task-btn' : 'loadNewTaskForm'
+           // 'click #load-more-btn' : 'loadMoreUsers',
+            //'click .btn.btn-primary' : 'editUser',
+            //'click .btn.btn-danger' : 'deleteUser'
+        },
 
         //editUser: function(ev){
         //
@@ -629,19 +629,19 @@ yasana.views = yasana.views || {};
             yasana.utils.Constants.view.get_task_page_no = 0;
         },
 
-        //loadNewUserForm : function(event){
-        //
-        //    if(event.preventDefault){
-        //        event.preventDefault();
-        //    }
-        //    else{
-        //        event.returnValue = false;
-        //    }
-        //
-        //    var newUserViewForm =  new mod.NewUserForm({model: new models.User()});
-        //    yasana.utils.views.unbindPopupViewEvent(newUserViewForm);
-        //    newUserViewForm.render();
-        //},
+        loadNewTaskForm : function(event){
+
+            if(event.preventDefault){
+                event.preventDefault();
+            }
+            else{
+                event.returnValue = false;
+            }
+
+            var newTaskViewForm =  new mod.NewTaskForm({model: new models.Task()});
+            yasana.utils.views.unbindPopupViewEvent(newTaskViewForm);
+            newTaskViewForm.render();
+        },
 
         getHtmlFromUrlCallback: function(html){
             localStorage.yasana_pending_task_collection_partial_view = html;
@@ -759,6 +759,110 @@ yasana.views = yasana.views || {};
         renderFirst: function () {
             this.$el.prepend(this.compiledTemplate({'task': this.model.toJSON()}));
         }
+    });
+
+    mod.NewTaskForm = Backbone.View.extend({
+
+        model: models.Task,
+
+        el: '.popup-wrap',
+
+        events: {
+            'click #submit-task':'submitTaskForm'
+        },
+
+        submitTaskForm: function(ev){
+
+            ev.preventDefault();
+            var self = this;
+
+            if (yasana.utils.helpers.validateRequired(this.model.get('title')) == false){
+
+                toastr.error('Please enter the title.');
+                return;
+            }
+
+            if (yasana.utils.helpers.validateRequired(this.model.get('details')) == false){
+
+                toastr.error('Please enter the details.');
+                return;
+            }
+
+            this.model.set('priority', this.$el.find("#priority").val());
+             if (yasana.utils.helpers.validateTaskPriority(this.model.get('priority')) == false){
+                toastr.error('Please select a valid priority.');
+                return;
+            }
+
+            toastr.info('Saving form...');
+            var data = $(".popup-wrap form").serialize();
+
+            $.post("/api/tasks/", data, function (jsonMessage) {
+                if (jsonMessage.save_status == true) {
+                    toastr.success('Task saved successfully.');
+                    var title = self.model.get('title');
+                    title = title.substring(0, 1).toUpperCase() + title.substring(1);
+
+                    self.model.set('title', title);
+                    self.model.set('id', jsonMessage.id);
+
+                    new mod.TaskRow({model:self.model}).renderFirst();
+                    yasana.utils.Constants.view.get_task_page_no += 1;
+                    yasana.utils.views.closePopup();
+                    if(typeof yasana.utils.Constants.view.current_task_collection == "undefined"){
+                        yasana.utils.Constants.view.current_task_collection = new collections.PendingTaskCollections();
+                    }
+                    yasana.utils.Constants.view.current_task_collection.push(self.model);
+                    // dereferencing the taskFormPopup will allow a new form with a new csrf token to be fetched
+                    delete localStorage.taskFormPopup;
+
+                }
+                else {
+                    errorMessages = '';
+                    _.forEach(jsonMessage.save_status, function(error){
+                        errorMessages += error +'/n';
+                    });
+                     toastr.error(errorMessages);
+                }
+            });
+        },
+
+        initialize: function(){
+             if(typeof localStorage.taskFormPopup == "undefined"){
+                yasana.utils.views.getHtmlFromUrl(yasana.utils.Constants.url.get_add_task_partial_view,
+                this.loadNewTaskFormCallback);
+            }
+        },
+
+        loadNewTaskFormCallback: function(template){
+            var _template = jQuery("<div/>").append(template);
+            localStorage.taskFormPopup = $(_template).html();
+        },
+
+        bindings: {
+            '#title': 'title',
+            '#details' : 'details',
+            '#expected_end_date' : 'expected_end_date',
+            '#start_date' : 'start_date'
+        },
+
+        render: function(){
+
+            var self = this;
+
+            self.timeoutInstance = setInterval(function(){
+                if (typeof localStorage.taskFormPopup != "undefined"){
+                    self.$el.empty().append(localStorage.taskFormPopup).show();
+                    $('.popup-header-text').text('Add Task');
+                    self.$el.lightbox_me({ centered: true, lightboxSpeed: "fast" });
+                    yasana.utils.views.initClosePopupClickEvent();
+                    clearInterval(self.timeoutInstance);
+                    self.stickit();
+                }
+            }, 3);
+        },
+
+        timeoutInstance: undefined
     });
 
 })($, Backbone, _, yasana.collections, yasana.models, yasana.views);

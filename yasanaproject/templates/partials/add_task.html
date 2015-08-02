@@ -1,0 +1,50 @@
+
+<div class="popup-header">
+    <span class="popup-header-text">Add Task</span>
+    <span class="popup-close">x</span>
+</div>
+
+<form>
+   {% csrf_token %}
+    <p>
+        <input type="text" id="title" name="title" placeholder="Title" class="form-control"/>
+    </p>
+    <p id="titleError" class="form_error"></p>
+
+     <p>
+         <textarea id="details" name="details" placeholder="Details..." class="form-control" rows="10">
+
+         </textarea>
+    </p>
+
+     <p id="detailsError" class="form_error"></p>
+
+     <p>
+         <select id="priority" name="priority" class="form-control">
+             <option value="-1" selected="selected">Select priority...</option>
+             <option value="0">Low</option>
+             <option value="1">Medium</option>
+             <option value="2">High</option>
+             <option value="3">Critical</option>
+         </select>
+     </p>
+
+    <p id="priorityError" class="form_error"></p>
+
+     <p>
+        <input type="text" id="start_date" name="start_date" placeholder="Start Date" class="form-control"/>
+    </p>
+
+     <p>
+        <input type="text" id="expected_end_date" name="expected_end_date" placeholder="Expected end date" class="form-control"/>
+    </p>
+
+
+     <p>
+        <input type="submit" id="submit-task" class="btn btn-default" value="submit"/>
+    </p>
+
+    <p class="error-p">
+        <label style="color: #EB2424; font-weight: bolder;"> </label>
+    </p>
+</form>

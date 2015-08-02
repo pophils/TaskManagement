@@ -21,7 +21,7 @@
       <table class="table table-hover table-striped">
       <thead class="grid-thead">
         <tr>
-          <th class="image-th">Title</th>
+          <th>Title</th>
           <th>Start Date</th>
           <th>Expected End Date</th>
           <th>Details</th>
@@ -44,14 +44,17 @@
 </script>
 <script type="text/template" id="task-row">
      <tr>
-          <th class="stickit_title" scope="row"><%= task.title %></th>
+          <td class="stickit_title title_details_format"><%= task.title %></td>
           <td class="stickit_start_date"><%= task.start_date %></td>
          <td class="stickit_end_date"><%= task.expected_end_date %></td>
-          <td class="stickit_details"><%= task.details %></td>
+          <td class="stickit_details title_details_format"><%= task.details %></td>
          <td class="stickit_priority"><%= task.priority %></td>
             <td>
-                <button type="button" class="btn btn-primary">Edit</button>
-                <button type="button" class="btn btn-danger">Delete</button>
+                <input type="hidden" value="<%= task.id %>" class="task_ref"/>
+                <button type="button" class="btn btn-default task_btn_format">Complete</button>
+                <button type="button" class="btn btn-success task_btn_format">View</button>
+                <button type="button" class="btn btn-primary task_btn_format">Edit</button>
+                <button type="button" class="btn btn-danger task_btn_format">Delete</button>
             </td>
         </tr>
 </script>

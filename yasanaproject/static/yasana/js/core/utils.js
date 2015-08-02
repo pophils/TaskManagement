@@ -154,11 +154,22 @@ yasana.utils = yasana.utils || {};
             return gender == 'm' || gender == 'f' || gender == 'p';
         },
 
-        validateFirstName: function(firstName){
-            if(typeof firstName == "undefined"){
+        validateTaskPriority: function(priority){
+            try{
+                priority = parseInt(priority);
+            }
+            catch(ex){
                 return false;
             }
-            else if(typeof firstName != "undefined" && firstName.length < 1){
+
+            return priority >= 0 && priority < 4;
+        },
+
+        validateRequired: function(value){
+            if(typeof value == "undefined"){
+                return false;
+            }
+            else if(typeof value != "undefined" && value.length < 1){
                 return false;
             }
 
@@ -206,7 +217,8 @@ yasana.utils = yasana.utils || {};
          get_user_collection:"/api/users/?pg_no=",
          get_total_users:"/api/total-users/",
          get_total_pending_tasks:"/api/total-tasks/?status=0",
-         get_pending_task_collection_partial_view: "partials/task-collection/?status=0"
+         get_pending_task_collection_partial_view: "partials/task-collection/?status=0",
+         get_add_task_partial_view: 'partials/add-task/'
     });
 
     mod.Constants.view = mod.Constants.view || {};

@@ -32,7 +32,7 @@ yasana.models = yasana.models || {};
         defaults:{
             "title":"",
             "details":"",
-            "status":"",
+            "status":0,
             "priority":"",
             "expected_end_date":"",
             "is_completed": "",
