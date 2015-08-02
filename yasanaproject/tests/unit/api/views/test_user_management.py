@@ -3,10 +3,8 @@
 from django.test import TestCase
 from django.core.urlresolvers import resolve
 from django.contrib.auth import get_user_model
-from django.test.client import MULTIPART_CONTENT, BOUNDARY, encode_multipart
 from rest_framework.test import APIClient
 from api.controller.account import api_get_users, get_users_total_count
-from unittest import skip
 
 
 class UserManagementApiTestCase(TestCase):
@@ -218,3 +216,12 @@ class UserManagementApiTestCase(TestCase):
                                                    'email': 'name@name.com'}, format='json')
 
         self.assertEqual(response.data, {'save_status': True})
+
+        saved_user = get_user_model().objects.all()[0]
+
+        self.assertEqual(response.data, {'save_status': True})
+        self.assertEqual(saved_user.first_name, 'name2')
+        self.assertNotEqual(saved_user.first_name, 'name1')
+
+        self.assertEqual(saved_user.last_name, 'larry')
+        self.assertNotEqual(saved_user.last_name, 'name2')

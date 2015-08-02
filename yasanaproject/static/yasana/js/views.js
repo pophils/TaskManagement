@@ -81,7 +81,7 @@ yasana.views = yasana.views || {};
 
         events: {
             'click #new-user-btn' : 'loadNewUserForm',
-            'click #load-more-user-btn' : 'loadMoreUsers',
+            'click #load-more-btn' : 'loadMoreUsers',
             'click .btn.btn-primary' : 'editUser',
             'click .btn.btn-danger' : 'deleteUser'
         },
@@ -181,21 +181,28 @@ yasana.views = yasana.views || {};
 
                     self.collection.fetch({
                         success: function(e){
-                            for(var k = 0; k < self.collection.length; k++){
-                                var userRowView = new mod.UserRow({model:self.collection.at(k)});
-                                userRowView.render();
+                            if(self.collection.length > 0){
+                                for(var k = 0; k < self.collection.length; k++){
+                                    var userRowView = new mod.UserRow({model:self.collection.at(k)});
+                                    userRowView.render();
+                                }
+                                yasana.utils.Constants.view.get_users_page_no += self.collection.length;
+                                if(yasana.utils.Constants.view.current_total_users <= self.collection.length){
+                                    yasana.utils.views.hideLoadMoreBtn();
+                                }
+                                yasana.utils.Constants.view.current_user_collection = self.collection;
                             }
-                            yasana.utils.views.hideLoading();
-                            yasana.utils.Constants.view.get_users_page_no += self.collection.length;
-
-                            if(yasana.utils.Constants.view.current_total_users <= self.collection.length){
+                            else{
+                                yasana.utils.views.displayNoItem();
                                 yasana.utils.views.hideLoadMoreBtn();
                             }
 
-                            yasana.utils.Constants.view.current_user_collection = self.collection;
+                            yasana.utils.views.hideLoading();
                         },
                         error: function(e){
                             yasana.utils.views.hideLoading();
+                            yasana.utils.views.hideLoadMoreBtn();
+                            yasana.utils.views.displayNoItem();
                             toastr.error(e + " error");
                         }
                     });
@@ -553,6 +560,205 @@ yasana.views = yasana.views || {};
         },
 
         timeoutInstance: undefined
+    });
+
+    mod.PendingTaskPage = Backbone.View.extend({
+
+        model: models.Task,
+
+        el: ".main-content",
+
+        collection: collections.PendingTaskCollections,
+
+        //events: {
+        //    'click #new-user-btn' : 'loadNewUserForm',
+        //    'click #load-more-user-btn' : 'loadMoreUsers',
+        //    'click .btn.btn-primary' : 'editUser',
+        //    'click .btn.btn-danger' : 'deleteUser'
+        //},
+
+        //editUser: function(ev){
+        //
+        //    var email = $(ev.target).parent().parent().find('.stickit_email').text();
+        //    var modelTobeEdited = yasana.utils.Constants.view.current_user_collection.get(email);
+        //    var editUserView = new mod.EditUserForm({model: modelTobeEdited, btnTarget: ev.target});
+        //    yasana.utils.views.unbindPopupViewEvent(editUserView);
+        //    editUserView.render();
+        //},
+        //
+        //deleteUser: function(ev){
+        //    var email = $(ev.target).parent().parent().find('.stickit_email').text();
+        //    var modelTobeEdited = yasana.utils.Constants.view.current_user_collection.get(email);
+        //
+        //     $.ajax({
+        //        url:'/api/users/',
+        //        type: 'DELETE',
+        //        data: {email: email},
+        //        success: function(jsonMessage){
+        //            if (jsonMessage.save_status == true) {
+        //                toastr.success('User deleted successfully.');
+        //
+        //                yasana.utils.Constants.view.get_users_page_no -= 1;
+        //                yasana.utils.Constants.view.current_user_collection.remove(modelTobeEdited);
+        //                modelTobeEdited = undefined;
+        //
+        //                $(ev.target).parent().parent().remove();
+        //            }
+        //            else {
+        //                toastr.error(jsonMessage.save_status);
+        //                console.log(jsonMessage.save_status);
+        //            }
+        //        },
+        //        error: function(){
+        //
+        //        }
+        //
+        //    });
+        //
+        //},
+
+        initialize: function(){
+
+            yasana.utils.views.getJsonFromUrl(yasana.utils.Constants.url.get_total_pending_tasks,
+                this.getTotalTaskCallback);
+
+            if(typeof localStorage.yasana_pending_task_collection_partial_view == 'undefined'){
+                yasana.utils.views.getHtmlFromUrl(yasana.utils.Constants.url.get_pending_task_collection_partial_view,
+                this.getHtmlFromUrlCallback);
+            }
+            yasana.utils.Constants.view.get_task_page_no = 0;
+        },
+
+        //loadNewUserForm : function(event){
+        //
+        //    if(event.preventDefault){
+        //        event.preventDefault();
+        //    }
+        //    else{
+        //        event.returnValue = false;
+        //    }
+        //
+        //    var newUserViewForm =  new mod.NewUserForm({model: new models.User()});
+        //    yasana.utils.views.unbindPopupViewEvent(newUserViewForm);
+        //    newUserViewForm.render();
+        //},
+
+        getHtmlFromUrlCallback: function(html){
+            localStorage.yasana_pending_task_collection_partial_view = html;
+        },
+
+        getTotalTaskCallback: function(jsonMessage){
+            yasana.utils.Constants.view.current_total_tasks = parseInt(jsonMessage.num_of_tasks);
+        },
+
+        compiledTemplate: undefined,
+
+        render: function(){
+
+            var self = this;
+
+            self.timeoutInstance = setInterval(function(){
+
+                if (typeof localStorage.yasana_pending_task_collection_partial_view != "undefined"){
+                    if(typeof self.compiledTemplate == 'undefined'){
+                        self.$el.empty().append(localStorage.yasana_pending_task_collection_partial_view);
+                        self.compiledTemplate = yasana.utils.views.compileTemplate($('#task-template').html());
+                    }
+
+                    self.$el.append(self.compiledTemplate);
+                    yasana.utils.Constants.view.nav_link_clicked = $('li#pending-task-link');
+                    yasana.utils.views.updateNavLinkActiveClass();
+                    clearInterval(self.timeoutInstance);
+
+                    self.collection.fetch({
+                        success: function(e){
+
+                            if(self.collection.length > 0){
+                                for(var k = 0; k < self.collection.length; k++){
+                                    var taskRowView = new mod.TaskRow({model:self.collection.at(k)});
+                                    taskRowView.render();
+                                }
+                                yasana.utils.Constants.view.get_task_page_no += self.collection.length;
+                                if(yasana.utils.Constants.view.current_total_tasks <= self.collection.length){
+                                    yasana.utils.views.hideLoadMoreBtn();
+                                }
+                            yasana.utils.Constants.view.current_task_collection = self.collection;
+                            }
+                            else{
+                                yasana.utils.views.displayNoItem();
+                                yasana.utils.views.hideLoadMoreBtn();
+                            }
+
+
+                            yasana.utils.views.hideLoading();
+
+                        },
+                        error: function(e){
+                            yasana.utils.views.hideLoading();
+                            toastr.error(e + " error");
+                            yasana.utils.views.displayNoItem();
+                            yasana.utils.views.hideLoadMoreBtn();
+                        }
+                    });
+                }
+            }, 3);
+        },
+
+        timeoutInstance: undefined
+
+        //loadMoreUsers: function(){
+        //
+        //     var new_coll = new collections.UserCollections();
+        //
+        //    new_coll.url = yasana.utils.Constants.url.get_user_collection + yasana.utils.Constants.view.get_users_page_no;
+        //    new_coll.fetch({
+        //                success: function(e){
+        //
+        //                    for(var k = 0; k < new_coll.length; k++){
+        //                        var userRowView = new mod.UserRow({model:new_coll.at(k)});
+        //                        userRowView.render();
+        //                        if(typeof yasana.utils.Constants.view.current_user_collection == "undefined"){
+        //                            yasana.utils.Constants.view.current_user_collection = new collections.UserCollections();
+        //                        }
+        //
+        //                        yasana.utils.Constants.view.current_user_collection.push(userRowView.model);
+        //                    }
+        //
+        //                    yasana.utils.Constants.view.get_users_page_no += new_coll.length;
+        //
+        //                     if(new_coll.length == 0){
+        //                         toastr.info('No more user exist.');
+        //                         yasana.utils.views.hideLoadMoreBtn();
+        //                    }
+        //                    delete new_coll
+        //                },
+        //                error: function(e){
+        //                    toastr.error(e + " error");
+        //                }
+        //            });
+        //}
+
+    });
+
+    mod.TaskRow = Backbone.View.extend({
+
+        model: models.Task,
+
+        el: '#tbody',
+
+        compiledTemplate: undefined,
+
+        initialize: function(){
+            this.compiledTemplate = yasana.utils.views.compileTemplate($('#task-row').html());
+        },
+
+        render: function(){
+           this.$el.append(this.compiledTemplate({'task': this.model.toJSON()}));
+        },
+
+        renderFirst: function () {
+            this.$el.prepend(this.compiledTemplate({'task': this.model.toJSON()}));
+        }
     });
 
 })($, Backbone, _, yasana.collections, yasana.models, yasana.views);

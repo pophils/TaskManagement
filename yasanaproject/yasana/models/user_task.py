@@ -14,27 +14,23 @@ class Task(AbstractBaseEntity, models.Model):
     )
 
     status = (
-        (0, 'Not started'),
-        (1, 'In progress'),
-        (2, 'Completed'),
-        (3, 'Stopped'),
-        (4, 'Failed'),
+        (0, 'In progress'),
+        (1, 'Completed'),
     )
 
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='tasks')
-    users_assigned = models.ManyToManyField(settings.AUTH_USER_MODEL)
-    priority = models.IntegerField(choices=priorities)
-    status = models.IntegerField(choices=status, db_index=True)
+    priority = models.IntegerField(choices=priorities, default=0)
+    status = models.IntegerField(choices=status, db_index=True, default=0)
     title = models.CharField(max_length=30, db_index=True)
-    details = models.CharField(max_length=200, blank=True, null=True)
+    details = models.CharField(max_length=200)
     is_completed = models.BooleanField(default=False)
     start_date = models.DateField(blank=True, null=True)
     expected_end_date = models.DateField(blank=True, null=True)
     actual_end_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
-        return ' {} created on {} and assigned to {} users with current status: {}'.\
-            format(self.title, self.created_date, self.users_assigned.count(), self.status)
+        return ' {} created on {} with current status: {}'.\
+            format(self.title, self.created_date, self.status)
 
     class Meta:
         db_table = 'task'

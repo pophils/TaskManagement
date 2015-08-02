@@ -19,5 +19,14 @@ yasana.collections = yasana.collections || {};
         page_no: 0
     });
 
+    mod.PendingTaskCollections = Backbone.Collection.extend({
+
+        url:"/api/tasks/?status=0&pg_no=0",
+
+        model: models.Task,
+
+        page_no: 0
+    });
+
 })($, Backbone, yasana.models, yasana.collections);
 
