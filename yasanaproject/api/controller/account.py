@@ -16,13 +16,13 @@ def api_get_users(request):
         try:
             page_num = int(request.GET.get('pg_no', 0))
         except ValueError:
-            return Response(status=api_status.HTTP_400_BAD_REQUEST)
-        else:
-            if page_num < 0:
-                page_num = 0
-            non_admin_users = get_user_model().objects.filter(is_admin=False)
-            return Response(UserSerializer(non_admin_users.order_by('-created_date')[page_num:page_num+10], many=True)
-                            .data, status=api_status.HTTP_200_OK)
+            return Response({'status': 'bad request'}, status=api_status.HTTP_400_BAD_REQUEST)
+
+        if page_num < 0:
+            page_num = 0
+        non_admin_users = get_user_model().objects.filter(is_admin=False)
+        return Response(UserSerializer(non_admin_users.order_by('-created_date')[page_num:page_num+10], many=True)
+                        .data, status=api_status.HTTP_200_OK)
     elif request.method == 'POST':
 
         form = CreateUserForm(data=request.POST)

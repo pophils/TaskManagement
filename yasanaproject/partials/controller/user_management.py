@@ -10,3 +10,7 @@ def user_collection_partial(request):
 def add_user_partial(request):
     return render(request, 'partials/add_user.html')
 
+
+def add_task_partial(request):
+    return render(request, 'partials/add_task.html')
+

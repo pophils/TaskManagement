@@ -25,5 +25,23 @@ yasana.models = yasana.models || {};
         idAttribute: "email"
     });
 
+    mod.Task = Backbone.Model.extend({
+
+        url:"/api/tasks/",
+
+        defaults:{
+            "title":"",
+            "details":"",
+            "status":0,
+            "priority":"",
+            "expected_end_date":"",
+            "is_completed": "",
+            "start_date" : "",
+            "id": ""
+        },
+
+        idAttribute: "id"
+    });
+
 })($, Backbone, yasana.models);
 

@@ -16,7 +16,8 @@ yasana.routers = yasana.routers || {};
 
         routes: {
              "": "home",
-            "user-manager": "manageUsers"
+            "user-manager": "manageUsers",
+            "pending-task": "pendingTask"
         },
 
         home: function(){
@@ -27,6 +28,12 @@ yasana.routers = yasana.routers || {};
         manageUsers: function(){
             var view = new views.ManageUserPage({collection: new collections.UserCollections()});
             this.render(view);
+        },
+
+        pendingTask : function(){
+            var view = new views.PendingTaskPage({collection: new collections.PendingTaskCollections()});
+            this.render(view);
+
         },
 
         render: function(view){
