@@ -1,0 +1,25 @@
+
+ <ul class="dashboard-summary-container">
+     {% if perms.account.can_manage_users %}
+       <li>
+            <p class="summary-count users">0</p>
+           <p class="summary-text users"> Users</p>
+       </li>
+     {% endif %}
+
+      <li>
+          <p class="summary-count new"> 0</p>
+           <p class="summary-text new"> New</p>
+       </li>
+
+      <li>
+          <p class="summary-count pending">0</p>
+           <p class="summary-text pending"> Pending</p>
+       </li>
+
+      <li>
+          <p class="summary-count completed">0</p>
+           <p class="summary-text completed"> Completed</p>
+       </li>
+
+     </ul>

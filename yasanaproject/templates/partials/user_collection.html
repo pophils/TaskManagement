@@ -1,0 +1,58 @@
+
+{% load staticfiles %}
+
+<script type="text/template" id="manage-users">
+
+     <div class="page-header-wrapper">
+     <div class="page-sub-title">
+     Manage Users
+     </div>
+
+     <div class="new-entity-div">
+     <button type="button" class="btn btn-success" id="new-user-btn">New user</button>
+     </div>
+     </div>
+
+
+  <div class="grid-wrapper">
+
+  <div class="grid-rows">
+
+      <table class="table table-hover table-striped">
+      <thead class="grid-thead">
+        <tr>
+          <th class="image-th">Image</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Department</th>
+            <th>Options</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-footer">
+      <input type="button" class="btn btn-default" id="load-more-user-btn" value="Load more..."/>
+  </div>
+
+  </div>
+
+</script>
+
+<script type="text/template" id="user-row">
+     <tr>
+          <th scope="row"><img src="{% static 'yasana/images/brewer.jpg' %}" class="grid-user-image"></th>
+          <td class="stickit_name"><%= user.name %></td>
+         <td class="stickit_email"><%= user.email %></td>
+          <td class="stickit_phone"><%= user.phone %></td>
+         <td class="stickit_department"><%= user.department %></td>
+            <td>
+                <button type="button" class="btn btn-primary">Edit</button>
+                <button type="button" class="btn btn-danger">Delete</button>
+            </td>
+        </tr>
+</script>

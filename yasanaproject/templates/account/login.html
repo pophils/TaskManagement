@@ -1,0 +1,56 @@
+
+{% extends 'common/base.html' %}
+
+ {% block title %}
+          yasana -- login
+ {% endblock title %}
+
+ {% block nav_links %}
+
+{% endblock nav_links %}
+
+ {% block h2_greeting %}
+  {% endblock h2_greeting %}
+
+ {% block main-container %}
+  <div id="login-form-div">
+
+   <h3 id="login-header-title">Login</h3>
+
+     <form action="{% url 'account:login' %}" method="post" id="login-form">
+        {% csrf_token %}
+     <p>
+        <input type="text" name="email" id="email" placeholder="Please enter your email" maxlength="255"
+                 {% if login_form.email.value %}
+                     value = '{{ login_form.email.value }}'
+                 {% endif %}
+                >
+        {% if login_form.email.errors %}
+             <label style="color:rgb(218, 9, 9);"> {{ login_form.email.errors.0 }}</label>
+        {% endif %}
+         </p>
+     <p>
+        <input type="password" name='password' id="password" maxlength="255" placeholder="Please enter your password">
+     {% if login_form.password.errors %}
+             <label style="color:rgb(218, 9, 9);"> {{ login_form.password.errors.0 }}</label>
+        {% endif %}
+     </p>
+
+     <p>
+        <input type="submit" value="Login" id="submit-btn">
+     </p>
+
+        <label style="color: rgb(218, 9, 9);">
+           {% if error_message %}
+               {{ error_message }}
+            {% endif %}
+        </label>
+     </form>
+  </div>
+
+
+ {% endblock main-container %}
+
+{% block backbone_script %}
+
+{% endblock backbone_script %}

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+{% load staticfiles %}
+    <title>
+         {% block title %}
+          yasana -- login
+        {% endblock title %}
+    </title>
+
+    {%  block styles %}
+         <link rel="stylesheet" type="text/css" href="{% static  'yasana/css/bootstrap.min.css' %}">
+         <link rel="stylesheet" type="text/css" href="{% static  'yasana/css/toastr.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static  'yasana/css/main.css' %}">
+    {% endblock styles %}
+
+</head>
+<body>
+
+
+{% block header %}
+
+    <header role="top-header">
+        <div class="simple-logo">
+            <a href="{% url 'yasana:landing' %}">Yasana</a>
+        </div>
+
+        <div class="auth-user">
+            {% if user.is_authenticated %}
+                 <span>Welcome {{ user.first_name }}</span> |
+
+                <a href="{% url 'account:logout' %}">Logout</a>
+
+                {% else %}
+                 <a href="{% url 'account:login' %}">Login</a>
+
+            {% endif %}
+
+    </div>
+    </header>
+
+
+
+{% endblock header %}
+
+   <div id="loading-div">
+  <div class="content">Loading...</div>
+    </div>
+
+{% block nav_links %}
+
+<div class="nav-links">
+  <div id="user-logo-welcome">
+      <img src="{% static 'yasana/images/brewer.jpg' %}" id="user-image">
+      <div id="user-welcome">
+          <p class="welcome">Welcome</p>
+          <p class="username"> Mr admin. </p>
+      </div>
+  </div>
+    <hr style="clear: both; border: none;">
+   <ul id="nav_link_ul">
+       <li href="" class="active" id="dashboard-link"> Dashboard </li>
+       <li>Completed Task </li>
+       <li>Pending Task</li>
+       <li>Pending Task wall</li>
+       {% if perms.account.can_manage_users %}
+
+<input type="hidden" id="is_admin_user" value="1"/>
+       <li href="user-manager" id="manage-user-link">Manage users</li>
+       <li> <a href="{% url 'account:manage_users' %}">Manage usersa</a></li>
+       {% endif %}
+       <li> <a href="#">My profile</a></li>
+   </ul>
+</div>
+{% endblock nav_links %}
+
+<div class="main-content">
+
+ {% block main-container %}
+
+ {% endblock main-container %}
+
+</div>
+
+{% block backbone_script %}
+
+<script type="application/javascript" src="{% static 'yasana/js/vendor/jquery.js' %}"></script>
+<script type="application/javascript" src="{% static 'yasana/js/vendor/toastr.js' %}"></script>
+<script type="application/javascript" src="{% static 'yasana/js/vendor/underscore.js' %}"></script>
+<script type="application/javascript" src="{% static 'yasana/js/vendor/backbone.js' %}"></script>
+<script type="application/javascript" src="{% static 'yasana/js/vendor/backbone.stickit.js' %}"></script>
+<script type="application/javascript" src="{% static 'yasana/js/vendor/lightbox_me.js' %}"></script>
+<script type="application/javascript" src="{% static 'yasana/js/core/utils.js' %}"></script>
+<script type="application/javascript" src="{% static 'yasana/js/models.js' %}"></script>
+<script type="application/javascript" src="{% static 'yasana/js/collections.js' %}"></script>
+<script type="application/javascript" src="{% static 'yasana/js/views.js' %}"></script>
+<script type="application/javascript" src="{% static 'yasana/js/routers.js' %}"></script>
+<script type="application/javascript" src="{% static 'yasana/js/page.js' %}"></script>
+
+{% endblock backbone_script %}
+
+<script type="text/template" id="dashboard">
+
+ <ul class="dashboard-summary-container">
+     {% if perms.account.can_manage_users %}
+       <li>
+            <p class="summary-count users">0</p>
+           <p class="summary-text users"> Users</p>
+       </li>
+     {% endif %}
+
+      <li>
+          <p class="summary-count new"> 0</p>
+           <p class="summary-text new"> New</p>
+       </li>
+
+      <li>
+          <p class="summary-count pending">0</p>
+           <p class="summary-text pending"> Pending</p>
+       </li>
+
+      <li>
+          <p class="summary-count completed">0</p>
+           <p class="summary-text completed"> Completed</p>
+       </li>
+
+     </ul>
+</script>
+
+{##}
+{# <script type="text/template" id="detailId">#}
+{#        <h1> Book Details</h1>#}
+{#        <p>#}
+{#            <b> <%= name %> </b> by <%= author %>#}
+{#        </p>#}
+{#    </script>#}
+{##}
+{#<script type="application/javascript">#}
+{##}
+{#    var Book = Backbone.Model.extend({#}
+{#        initialize: function(options){#}
+{#            console.log('New Book created.');#}
+{#            console.log(options)#}
+{#            this.on("change", function(){#}
+{#                console.log("Book Model changed.");#}
+{#            });#}
+{##}
+{#            this.on("change:name", function(){#}
+{#                console.log("Name changed.");#}
+{#            });#}
+{#        },#}
+{##}
+{#        defaults: {#}
+{#            name:" default name",#}
+{#            author: "default author"#}
+{#        },#}
+{#        url: '/account/manage-users-1'#}
+{#    });#}
+{##}
+{#    var Library = Backbone.Collection.extend({#}
+{#        model: Book,#}
+{#        initialize: function(){#}
+{#            console.log("New Library created");#}
+{#            this.on("remove", function(removedModel, models, options){#}
+{#                console.log('element removed at ' + options.index);#}
+{#                console.log(models)#}
+{#                console.log(removedModel)#}
+{#            });#}
+{#        }#}
+{#    });#}
+{##}
+{#    var view = Backbone.View.extend({#}
+{#        initialize: function(){#}
+{#            console.log("New view created.");#}
+{#            this.template = _.template($("#detailId").html());#}
+{#            this.model.on('change', this.render, this);#}
+{#        },#}
+{#        template: undefined,#}
+{##}
+{#        el: "#bkbone",#}
+{##}
+{#        render: function(){#}
+{#            this.$el.empty().append(this.template(this.model.toJSON()));#}
+{#            return this;#}
+{#        },#}
+{##}
+{#        model: Book,#}
+{##}
+{#        collection: Library,#}
+{##}
+{#        events: {#}
+{#            'click #book' : 'alertBook'#}
+{#        },#}
+{##}
+{#        alertBook: function(e){#}
+{#            alert('Book clicked');#}
+{#        }#}
+{##}
+{#    })#}
+{##}
+{#    var book = new Book({name: 'Js Fundamentals', author: "Joel Spoesky"}, {silent:true, bad:123});#}
+{#    var library = new Library();#}
+{#    var view1 = new view({model : book });#}
+{#</script>#}
+
+<div class="popup-wrap">
+
+</div>
+
+</body>
+</html>
