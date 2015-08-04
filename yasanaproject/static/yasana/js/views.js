@@ -112,6 +112,10 @@ yasana.views = yasana.views || {};
                         modelTobeEdited = undefined;
 
                         $(ev.target).parent().parent().remove();
+
+                        if(yasana.utils.Constants.view.current_user_collection.length == 0){
+                            yasana.utils.views.displayNoItem();
+                        }
                     }
                     else {
                         toastr.error(jsonMessage.save_status);
@@ -571,51 +575,100 @@ yasana.views = yasana.views || {};
         collection: collections.PendingTaskCollections,
 
         events: {
-            'click #new-task-btn' : 'loadNewTaskForm'
+            'click #new-task-btn' : 'loadNewTaskForm',
            // 'click #load-more-btn' : 'loadMoreUsers',
-            //'click .btn.btn-primary' : 'editUser',
-            //'click .btn.btn-danger' : 'deleteUser'
+            'click .edit_btn' : 'editTask',
+            'click .delete_btn' : 'deleteTask',
+            'click .view_btn' : 'viewTask',
+            'click .complete_btn' : 'completeTask'
         },
 
-        //editUser: function(ev){
-        //
-        //    var email = $(ev.target).parent().parent().find('.stickit_email').text();
-        //    var modelTobeEdited = yasana.utils.Constants.view.current_user_collection.get(email);
-        //    var editUserView = new mod.EditUserForm({model: modelTobeEdited, btnTarget: ev.target});
-        //    yasana.utils.views.unbindPopupViewEvent(editUserView);
-        //    editUserView.render();
-        //},
-        //
-        //deleteUser: function(ev){
-        //    var email = $(ev.target).parent().parent().find('.stickit_email').text();
-        //    var modelTobeEdited = yasana.utils.Constants.view.current_user_collection.get(email);
-        //
-        //     $.ajax({
-        //        url:'/api/users/',
-        //        type: 'DELETE',
-        //        data: {email: email},
-        //        success: function(jsonMessage){
-        //            if (jsonMessage.save_status == true) {
-        //                toastr.success('User deleted successfully.');
-        //
-        //                yasana.utils.Constants.view.get_users_page_no -= 1;
-        //                yasana.utils.Constants.view.current_user_collection.remove(modelTobeEdited);
-        //                modelTobeEdited = undefined;
-        //
-        //                $(ev.target).parent().parent().remove();
-        //            }
-        //            else {
-        //                toastr.error(jsonMessage.save_status);
-        //                console.log(jsonMessage.save_status);
-        //            }
-        //        },
-        //        error: function(){
-        //
-        //        }
-        //
-        //    });
-        //
-        //},
+        editTask: function(ev){
+            var taskId = $(ev.target).parent().find('.task_ref').val();
+            taskId = parseInt(taskId);
+            var modelTobeEdited = yasana.utils.Constants.view.current_task_collection.get(taskId);
+            var editTaskView = new mod.EditTaskForm({model: modelTobeEdited, btnTarget: ev.target});
+            yasana.utils.views.unbindPopupViewEvent(editTaskView);
+            editTaskView.render();
+        },
+
+        completeTask: function(ev){
+            var task_id = $(ev.target).parent().find('.task_ref').val();
+            var modelTobeCompleted = yasana.utils.Constants.view.current_task_collection.get(task_id);
+
+             $.ajax({
+                url:'/api/complete-task/',
+                type: 'PUT',
+                data: {id: task_id},
+                success: function(jsonMessage){
+                    if (jsonMessage.status == true) {
+                        toastr.success('Task completed successfully.');
+
+                        yasana.utils.Constants.view.get_task_page_no -= 1;
+                        yasana.utils.Constants.view.current_task_collection.remove(modelTobeCompleted);
+                        modelTobeCompleted = undefined;
+
+                        $(ev.target).parent().parent().remove();
+                        if(yasana.utils.Constants.view.current_task_collection.length == 0){
+                            yasana.utils.views.displayNoItem();
+                        }
+                    }
+                    else {
+                        toastr.error(jsonMessage.save_status);
+                        console.log(jsonMessage.save_status);
+                    }
+                },
+                error: function(){
+
+                }
+
+            });
+
+        },
+
+        deleteTask: function(ev){
+            var task_id = $(ev.target).parent().find('.task_ref').val();
+            var modelTobeDeleted = yasana.utils.Constants.view.current_task_collection.get(task_id);
+
+             $.ajax({
+                url:'/api/tasks/',
+                type: 'DELETE',
+                data: {id: task_id},
+                success: function(jsonMessage){
+                    if (jsonMessage.save_status == true) {
+                        toastr.success('Task deleted successfully.');
+
+                        yasana.utils.Constants.view.get_task_page_no -= 1;
+                        yasana.utils.Constants.view.current_task_collection.remove(modelTobeDeleted);
+                        modelTobeDeleted = undefined;
+
+                        $(ev.target).parent().parent().remove();
+
+                         if(yasana.utils.Constants.view.current_task_collection.length == 0){
+                            yasana.utils.views.displayNoItem();
+                        }
+                    }
+                    else {
+                        toastr.error(jsonMessage.save_status);
+                        console.log(jsonMessage.save_status);
+                    }
+                },
+                error: function(){
+
+                }
+
+            });
+
+        },
+
+        viewTask: function(ev){
+            var taskId = $(ev.target).parent().find('.task_ref').val();
+            taskId = parseInt(taskId);
+            var modelTobeViewed = yasana.utils.Constants.view.current_task_collection.get(taskId);
+            var viewTaskView = new mod.ViewTaskView({model: modelTobeViewed});
+            yasana.utils.views.unbindPopupViewEvent(viewTaskView);
+            viewTaskView.render();
+        },
 
         initialize: function(){
 
@@ -740,6 +793,160 @@ yasana.views = yasana.views || {};
 
     });
 
+     mod.ViewTaskView = Backbone.View.extend({
+
+         model: models.Task,
+
+         el: '.popup-wrap',
+
+         compiledTemplate: undefined,
+
+         initialize: function(){
+             this.compiledTemplate = yasana.utils.views.compileTemplate($('#view-task-row').html());
+         },
+
+        render: function(){
+
+            var self = this;
+            this.$el.append(this.compiledTemplate({'task': this.model.toJSON()}));
+
+            $('.popup-header-text').text('Task Details');
+            self.$el.lightbox_me({ centered: true, lightboxSpeed: "fast" });
+            yasana.utils.views.initClosePopupClickEvent();
+        }
+    });
+
+     mod.EditTaskForm = Backbone.View.extend({
+
+        model: models.Task,
+
+        el: '.popup-wrap',
+
+        events: {
+           'click #submit-task':'submitTaskForm'
+        },
+
+        submitTaskForm: function(ev){
+            ev.preventDefault();
+
+            var self = this;
+
+            if (yasana.utils.helpers.validateRequired(this.model.get('title')) == false){
+
+                toastr.error('Please enter the title.');
+                return;
+            }
+
+            if (yasana.utils.helpers.validateMaxLength(this.model.get('title'), 50) == false){
+
+                toastr.error('Title must be 50 characters or less.');
+                return;
+            }
+
+            if (yasana.utils.helpers.validateRequired(this.model.get('details')) == false){
+
+                toastr.error('Please enter the details.');
+                return;
+            }
+
+            if (yasana.utils.helpers.validateMaxLength(this.model.get('details'), 300) == false){
+
+                toastr.error('Details must be 300 characters or less.');
+                return;
+            }
+
+            this.model.set('priority', this.$el.find("#priority").val());
+             if (yasana.utils.helpers.validateTaskPriority(this.model.get('priority')) == false){
+                toastr.error('Please select a valid priority.');
+                return;
+            }
+
+           toastr.info('Updating task...');
+
+           var data = $(".popup-wrap form").serialize();
+            $.ajax({
+                url:'/api/tasks/',
+                type: 'PUT',
+                data: data,
+                success: function(jsonMessage){
+                    if (jsonMessage.save_status == true) {
+
+                        toastr.success('Task saved successfully.');
+                    var title = self.model.get('title');
+                    title = title.substring(0, 1).toUpperCase() + title.substring(1);
+
+                    self.model.set('title', title);
+
+                        self.model.set('priority',$(".popup-wrap #priority").val());
+
+                        $(self.btnTarget).parent().parent().find('.stickit_title').text(title);
+                        $(self.btnTarget).parent().parent().find('.stickit_details').text(self.model.get('details'));
+                        $(self.btnTarget).parent().parent().find('.stickit_start_date').text(self.model.get('start_date'));
+                        $(self.btnTarget).parent().parent().find('.stickit_end_date').text(self.model.get('expected_end_date'));
+                        $(self.btnTarget).parent().parent().find('.stickit_priority').text(self.model.get('priority'));
+
+                    yasana.utils.views.closePopup();
+                     delete localStorage.taskFormPopup;
+
+
+                    }
+                    else {
+                         errorMessages = '';
+                    _.forEach(jsonMessage.save_status, function(error){
+                        errorMessages += error +'/n';
+                    });
+                     toastr.error(errorMessages);
+                    }
+                },
+                error: function(){
+
+                }
+
+            });
+
+        },
+
+        initialize: function(options){
+            _.extend(this, _.pick(options, "btnTarget"));
+             if(typeof localStorage.taskFormPopup == "undefined"){
+                yasana.utils.views.getHtmlFromUrl(yasana.utils.Constants.url.get_add_task_partial_view,
+                this.loadNewTaskFormCallback);
+            }
+        },
+
+        loadNewTaskFormCallback: function(template){
+            var ss = jQuery("<div/>").append(template);
+            localStorage.taskFormPopup = $(ss).html();
+        },
+
+        bindings: {
+            '#title': 'title',
+            '#details' : 'details',
+            '#expected_end_date' : 'expected_end_date',
+            '#start_date' : 'start_date',
+            '#id' : 'id'
+        },
+
+        render: function(){
+
+            var self = this;
+
+            self.timeoutInstance = setInterval(function(){
+                if (typeof localStorage.taskFormPopup != "undefined"){
+                    self.$el.empty().append(localStorage.taskFormPopup).show();
+                     $('.popup-header-text').text('Edit Task');
+                    self.$el.find("#priority").val(self.model.get('priority'));
+                    self.$el.lightbox_me({ centered: true, lightboxSpeed: "fast" });
+                    yasana.utils.views.initClosePopupClickEvent();
+                    clearInterval(self.timeoutInstance);
+                    self.stickit();
+                }
+            }, 3);
+        },
+
+        timeoutInstance: undefined
+    });
+
     mod.TaskRow = Backbone.View.extend({
 
         model: models.Task,
@@ -782,9 +989,20 @@ yasana.views = yasana.views || {};
                 return;
             }
 
+            if (yasana.utils.helpers.validateMaxLength(this.model.get('title'), 50) == false){
+
+                toastr.error('Title must be 50 characters or less.');
+                return;
+            }
+
             if (yasana.utils.helpers.validateRequired(this.model.get('details')) == false){
 
                 toastr.error('Please enter the details.');
+                return;
+            }
+            if (yasana.utils.helpers.validateMaxLength(this.model.get('details'), 300) == false){
+
+                toastr.error('Details must be 300 characters or less.');
                 return;
             }
 

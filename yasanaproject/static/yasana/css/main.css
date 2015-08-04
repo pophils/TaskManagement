@@ -348,6 +348,10 @@ font-size: 22px;
     width: 530px;
     display: none;
     padding-bottom: 20px;
+     -webkit-border-radius: 3px;
+  -webkit-box-orient: vertical;
+  -webkit-transition: 200ms -webkit-transform;
+  box-shadow: 0 4px 23px 5px rgba(250, 247, 247, 0.65), 0 2px 6px rgba(249, 242, 242, 0.19);
 }
 
 .popup-wrap .popup-close{
@@ -400,6 +404,8 @@ font-size: 22px;
   padding-top: 17px;
     padding-bottom: 2px;
   overflow-y: auto;
+
+
 }
 .popup-wrap form input, .popup-wrap form select, .popup-wrap form textarea{
     margin-bottom: 25px;
@@ -427,4 +433,23 @@ font-size: 22px;
 #tbody .task_btn_format{
 
 padding: 6px 4px; font-size: 11px;
+}
+
+.popup-wrap .view_task_container{
+    width: 100%;
+  min-width: 500px;
+  padding: 10px 20px 10px 20px;
+}
+
+.popup-wrap .view_task_p_content{
+  margin-bottom: 0px;
+}
+.popup-wrap .view_task_p_sub_content{
+  margin-left: 10px;
+  font-size: 13px;
+  text-align: justify;
+  width: 430px;
+  display: inline-block;
+  white-space: normal;
+    color: rgba(121, 123, 124, 0.85);
 }

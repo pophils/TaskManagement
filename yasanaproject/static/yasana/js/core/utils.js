@@ -176,6 +176,14 @@ yasana.utils = yasana.utils || {};
             return true;
         },
 
+        validateMaxLength: function(value, maximumLength){
+
+            if (typeof value == 'string' && typeof maximumLength == 'number'){
+                return value.length <= maximumLength;
+            }
+            return false;
+        },
+
         validatePassword: function(password){
             if(typeof password == "undefined"){
                 return false;

@@ -118,3 +118,22 @@ def api_get_tasks(request):
 
         return Response({'save_status': False}, status=api_status.HTTP_204_NO_CONTENT)
 
+
+@api_view(['PUT'])
+def api_complete_task(request):
+
+    try:
+        pk = int(request.data['id'])
+    except KeyError:
+        return Response({'status': 'bad request'}, status=api_status.HTTP_400_BAD_REQUEST)
+    except ValueError:
+        return Response({'status': 'bad request'}, status=api_status.HTTP_400_BAD_REQUEST)
+
+    task = Task.objects.filter(pk=pk)
+
+    if task:
+        task.update(status=1, is_completed=True)
+        return Response({'status': True}, status=api_status.HTTP_200_OK)
+
+
+
