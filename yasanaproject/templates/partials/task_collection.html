@@ -51,10 +51,36 @@
          <td class="stickit_priority"><%= task.priority %></td>
             <td>
                 <input type="hidden" value="<%= task.id %>" class="task_ref"/>
-                <button type="button" class="btn btn-default task_btn_format">Complete</button>
-                <button type="button" class="btn btn-success task_btn_format">View</button>
-                <button type="button" class="btn btn-primary task_btn_format">Edit</button>
-                <button type="button" class="btn btn-danger task_btn_format">Delete</button>
+                <button type="button" class="btn btn-default task_btn_format complete_btn">Complete</button>
+                <button type="button" class="btn btn-success task_btn_format view_btn">View</button>
+                <button type="button" class="btn btn-primary task_btn_format edit_btn">Edit</button>
+                <button type="button" class="btn btn-danger task_btn_format delete_btn">Delete</button>
             </td>
         </tr>
+</script>
+
+
+
+<script type="text/template" id="view-task-row">
+    <div class="popup-header">
+    <span class="popup-header-text"></span>
+    <span class="popup-close">x</span>
+    </div>
+
+           <div class="view_task_container">
+           <p class="view_task_p_content">Title:</p>
+           <p class="view_task_p_sub_content"><%= task.title %></p>
+
+           <p class="view_task_p_content">Details:</p>
+           <p class="view_task_p_sub_content"><%= task.details %></p>
+
+           <p class="view_task_p_content">Priority:</p>
+           <p class="view_task_p_sub_content"><%= task.priority %></p>
+
+           <p class="view_task_p_content">Start date:</p>
+           <p class="view_task_p_sub_content"><%= task.start_date %></p>
+
+           <p class="view_task_p_content">End date:</p>
+           <p class="view_task_p_sub_content"><%= task.expected_end_date %></p>
+       </div>
 </script>
